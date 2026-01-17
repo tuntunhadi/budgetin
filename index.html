@@ -1,0 +1,2275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinancePro Ultimate - Money Manager Premium</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        'primary-dark': '#1D4ED8',
+                        secondary: '#10B981',
+                        danger: '#EF4444',
+                        warning: '#F59E0B',
+                        'dark-light': '#F8FAFC',
+                        dark: '#1F2937'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                        'bounce-in': 'bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+                        'pulse-subtle': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        },
+                        bounceIn: {
+                            '0%': { transform: 'scale(0.3)', opacity: '0' },
+                            '50%': { transform: 'scale(1.05)', opacity: '1' },
+                            '70%': { transform: 'scale(0.9)' },
+                            '100%': { transform: 'scale(1)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px rgba(0, 0, 0, 0.08)',
+                        'soft-lg': '0 15px 50px rgba(0, 0, 0, 0.12)',
+                        'neumorphism': '20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff',
+                        'inner-soft': 'inset 0 2px 10px rgba(0, 0, 0, 0.05)'
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/id.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <!-- Tippy.js (Tooltips) -->
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    
+    <!-- Sortable.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    
+    <!-- ProgressBar.js -->
+    <script src="https://cdn.jsdelivr.net/npm/progressbar.js@1.1.0/dist/progressbar.min.js"></script>
+    
+    <!-- PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <!-- Local Storage Encryption -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Glass Effect */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #3B82F6 0%, #10B981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Shimmer Loading */
+        .shimmer {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        /* Neumorphism */
+        .neumorphism {
+            border-radius: 20px;
+            background: #f0f0f0;
+            box-shadow: 20px 20px 60px #d9d9d9, -20px -20px 60px #ffffff;
+        }
+        
+        /* Gradient Border */
+        .gradient-border {
+            position: relative;
+            border-radius: 12px;
+            padding: 1px;
+        }
+        .gradient-border::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            padding: 2px;
+            background: linear-gradient(135deg, #3B82F6, #10B981, #8B5CF6);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: exclude;
+            -webkit-mask-composite: destination-out;
+        }
+        
+        /* Progress Ring */
+        .progress-ring {
+            transform: rotate(-90deg);
+        }
+        
+        /* Page Transitions */
+        .page-enter {
+            animation: slideUp 0.4s ease-out;
+        }
+        .page-exit {
+            animation: fadeOut 0.3s ease-out;
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* Floating Elements */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        /* Hover Effects */
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Pulse Animation */
+        .pulse-primary {
+            animation: pulse-primary 2s infinite;
+        }
+        @keyframes pulse-primary {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center">
+        <div class="relative w-32 h-32 mb-8">
+            <div class="absolute inset-0 rounded-full border-8 border-gray-200"></div>
+            <div class="absolute inset-0 rounded-full border-8 border-primary border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center">
+                    <i class="fas fa-wallet text-white text-3xl"></i>
+                </div>
+            </div>
+        </div>
+        <div class="text-center">
+            <h1 class="text-3xl font-bold gradient-text mb-2">FinancePro Ultimate</h1>
+            <p class="text-gray-600">Menginisialisasi sistem keuangan Anda...</p>
+            <div class="w-64 h-2 bg-gray-200 rounded-full mt-6 overflow-hidden">
+                <div id="loadingProgress" class="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="app" class="hidden min-h-screen">
+        <!-- Floating Action Buttons -->
+        <div class="fixed right-6 bottom-6 flex flex-col items-end space-y-3 z-40">
+            <button onclick="showAddTransaction()" class="w-14 h-14 bg-primary rounded-full shadow-lg flex items-center justify-center text-white hover:bg-primary-dark transition-all duration-300 hover:scale-110 group">
+                <i class="fas fa-plus text-xl"></i>
+                <span class="absolute right-full mr-3 bg-gray-900 text-white text-sm py-1 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Tambah Transaksi
+                </span>
+            </button>
+            <button onclick="showQuickStats()" class="w-12 h-12 bg-secondary rounded-full shadow-lg flex items-center justify-center text-white hover:bg-emerald-600 transition-all duration-300 hover:scale-110 group">
+                <i class="fas fa-chart-bar"></i>
+                <span class="absolute right-full mr-3 bg-gray-900 text-white text-sm py-1 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Quick Stats
+                </span>
+            </button>
+            <button onclick="exportToPDF()" class="w-12 h-12 bg-warning rounded-full shadow-lg flex items-center justify-center text-white hover:bg-yellow-600 transition-all duration-300 hover:scale-110 group">
+                <i class="fas fa-file-export"></i>
+                <span class="absolute right-full mr-3 bg-gray-900 text-white text-sm py-1 px-3 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Export PDF
+                </span>
+            </button>
+        </div>
+
+        <!-- Top Navigation Bar -->
+        <nav class="sticky top-0 z-30 glass-effect border-b border-gray-200 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <!-- Logo & Brand -->
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-xl flex items-center justify-center">
+                            <i class="fas fa-wallet text-white"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-bold text-gray-900">FinancePro <span class="text-primary">Ultimate</span></h1>
+                            <p class="text-xs text-gray-500">Smart Money Management</p>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="hidden md:flex items-center space-x-6">
+                        <div class="text-center">
+                            <p class="text-xs text-gray-500">Saldo Bulan Ini</p>
+                            <p id="currentBalance" class="font-bold text-lg text-gray-900">Rp 0</p>
+                        </div>
+                        <div class="h-8 w-px bg-gray-300"></div>
+                        <div class="text-center">
+                            <p class="text-xs text-gray-500">Pemasukan</p>
+                            <p id="currentIncome" class="font-bold text-lg text-green-600">Rp 0</p>
+                        </div>
+                        <div class="h-8 w-px bg-gray-300"></div>
+                        <div class="text-center">
+                            <p class="text-xs text-gray-500">Pengeluaran</p>
+                            <p id="currentExpense" class="font-bold text-lg text-red-600">Rp 0</p>
+                        </div>
+                    </div>
+
+                    <!-- User Menu -->
+                    <div class="flex items-center space-x-4">
+                        <button onclick="toggleNotifications()" class="relative p-2 text-gray-600 hover:text-primary transition">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span id="notificationBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center hidden">0</span>
+                        </button>
+                        
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 p-1 rounded-lg hover:bg-gray-100 transition">
+                                <div class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user text-white text-sm"></i>
+                                </div>
+                                <i class="fas fa-chevron-down text-gray-400 text-xs"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 hidden group-hover:block z-50">
+                                <a href="#" onclick="showPage('profile')" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-user-circle mr-3"></i> Profil Saya
+                                </a>
+                                <a href="#" onclick="backupData()" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-database mr-3"></i> Backup Data
+                                </a>
+                                <div class="border-t border-gray-200 my-1"></div>
+                                <a href="#" onclick="exportAllData()" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-download mr-3"></i> Export Data
+                                </a>
+                                <a href="#" onclick="importData()" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-upload mr-3"></i> Import Data
+                                </a>
+                                <div class="border-t border-gray-200 my-1"></div>
+                                <a href="#" onclick="logout()" class="flex items-center px-4 py-2 text-red-600 hover:bg-red-50">
+                                    <i class="fas fa-sign-out-alt mr-3"></i> Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="border-t border-gray-100">
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="flex space-x-1 overflow-x-auto py-1">
+                        <button onclick="showPage('dashboard')" class="nav-tab active">
+                            <i class="fas fa-home mr-2"></i> Dashboard
+                        </button>
+                        <button onclick="showPage('transactions')" class="nav-tab">
+                            <i class="fas fa-exchange-alt mr-2"></i> Transaksi
+                        </button>
+                        <button onclick="showPage('budget')" class="nav-tab">
+                            <i class="fas fa-chart-pie mr-2"></i> Anggaran
+                        </button>
+                        <button onclick="showPage('debts')" class="nav-tab">
+                            <i class="fas fa-handshake mr-2"></i> Hutang & Piutang
+                        </button>
+                        <button onclick="showPage('goals')" class="nav-tab">
+                            <i class="fas fa-bullseye mr-2"></i> Target
+                        </button>
+                        <button onclick="showPage('investments')" class="nav-tab">
+                            <i class="fas fa-chart-line mr-2"></i> Investasi
+                        </button>
+                        <button onclick="showPage('analytics')" class="nav-tab">
+                            <i class="fas fa-chart-bar mr-2"></i> Analytics
+                        </button>
+                        <button onclick="showPage('reports')" class="nav-tab">
+                            <i class="fas fa-file-alt mr-2"></i> Laporan
+                        </button>
+                        <button onclick="showPage('settings')" class="nav-tab">
+                            <i class="fas fa-cog mr-2"></i> Pengaturan
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <!-- Dashboard Page -->
+            <div id="dashboardPage" class="page-content animate__animated animate__fadeIn">
+                <!-- Welcome Card -->
+                <div class="mb-6 gradient-border">
+                    <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-xl p-6">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h2 class="text-2xl font-bold text-gray-900 mb-2">Selamat Datang, <span id="userName">Pengguna</span>! 👋</h2>
+                                <p class="text-gray-600">Mulai kelola keuangan Anda dari nol. <span id="currentDate"></span></p>
+                            </div>
+                            <button onclick="showFinancialTips()" class="flex items-center space-x-2 px-4 py-2 bg-white rounded-lg shadow-sm hover:shadow transition">
+                                <i class="fas fa-lightbulb text-yellow-500"></i>
+                                <span class="font-medium">Tips Keuangan</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <!-- Total Balance -->
+                    <div class="bg-white rounded-xl shadow-soft p-6 hover-lift">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Saldo</p>
+                                <h3 id="totalBalance" class="text-3xl font-bold mt-1">Rp 0</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-wallet text-primary text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-sm">
+                            <i class="fas fa-minus text-gray-400 mr-1"></i>
+                            <span class="text-gray-500">Mulai dari nol</span>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Income -->
+                    <div class="bg-white rounded-xl shadow-soft p-6 hover-lift">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm">Pemasukan Bulan Ini</p>
+                                <h3 id="monthlyIncome" class="text-3xl font-bold mt-1 text-green-600">Rp 0</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrow-down text-green-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">0% dari target</span>
+                            <div class="w-24 bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-500 h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Expense -->
+                    <div class="bg-white rounded-xl shadow-soft p-6 hover-lift">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm">Pengeluaran Bulan Ini</p>
+                                <h3 id="monthlyExpense" class="text-3xl font-bold mt-1 text-red-600">Rp 0</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-red-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-arrow-up text-red-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-500 text-sm">0% dari anggaran</span>
+                            <div class="w-24 bg-gray-200 rounded-full h-2">
+                                <div class="bg-red-500 h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Savings Rate -->
+                    <div class="bg-white rounded-xl shadow-soft p-6 hover-lift">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <p class="text-gray-500 text-sm">Rasio Tabungan</p>
+                                <h3 id="savingsRate" class="text-3xl font-bold mt-1 text-purple-600">0%</h3>
+                            </div>
+                            <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-purple-500 text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="text-sm">
+                            <div class="flex justify-between mb-1">
+                                <span>Target: 20%</span>
+                                <span>0%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                    <!-- Income vs Expense Chart -->
+                    <div class="bg-white rounded-xl shadow-soft p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-gray-900">Pemasukan vs Pengeluaran</h3>
+                            <div class="flex space-x-2">
+                                <select id="chartPeriod" class="text-sm border border-gray-300 rounded-lg px-3 py-1 bg-white">
+                                    <option value="month">Bulan Ini</option>
+                                    <option value="quarter">3 Bulan</option>
+                                    <option value="year">Tahun Ini</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="h-72 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <i class="fas fa-chart-bar text-gray-400 text-3xl"></i>
+                                </div>
+                                <p class="text-gray-500">Belum ada data transaksi</p>
+                                <button onclick="showAddTransaction()" class="mt-3 text-primary hover:text-primary-dark font-medium">
+                                    Tambah transaksi pertama →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Expense Breakdown Chart -->
+                    <div class="bg-white rounded-xl shadow-soft p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-lg font-bold text-gray-900">Breakdown Pengeluaran</h3>
+                            <button onclick="showCategoryAnalysis()" class="text-sm text-primary hover:text-primary-dark font-medium">
+                                Lihat Detail
+                            </button>
+                        </div>
+                        <div class="h-72 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="w-24 h-24 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <i class="fas fa-chart-pie text-gray-400 text-3xl"></i>
+                                </div>
+                                <p class="text-gray-500">Belum ada pengeluaran</p>
+                                <button onclick="showAddTransaction()" class="mt-3 text-primary hover:text-primary-dark font-medium">
+                                    Mulai catat pengeluaran →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity & Budget Status -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Recent Transactions -->
+                    <div class="lg:col-span-2 bg-white rounded-xl shadow-soft">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-lg font-bold text-gray-900">Transaksi Terbaru</h3>
+                                <button onclick="showPage('transactions')" class="text-sm text-primary hover:text-primary-dark font-medium">
+                                    Lihat Semua
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-8">
+                            <div class="text-center">
+                                <div class="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <i class="fas fa-receipt text-gray-400 text-2xl"></i>
+                                </div>
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">Belum ada transaksi</h4>
+                                <p class="text-gray-600 mb-4">Mulai catat transaksi pertama Anda untuk melihat ringkasan keuangan</p>
+                                <button onclick="showAddTransaction()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition font-medium">
+                                    <i class="fas fa-plus mr-2"></i> Tambah Transaksi Pertama
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Budget Status -->
+                    <div class="bg-white rounded-xl shadow-soft p-6">
+                        <h3 class="text-lg font-bold text-gray-900 mb-6">Status Anggaran</h3>
+                        <div class="space-y-4">
+                            <div class="text-center py-8">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                    <i class="fas fa-chart-bar text-gray-400 text-xl"></i>
+                                </div>
+                                <p class="text-gray-600 mb-3">Belum ada anggaran yang diatur</p>
+                                <button onclick="setupInitialBudget()" class="text-sm text-primary hover:text-primary-dark font-medium">
+                                    Atur anggaran pertama →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Financial Insights -->
+                <div class="mt-8 bg-gradient-to-r from-primary to-secondary rounded-xl shadow-soft p-6 text-white">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-bold">💰 Financial Insights</h3>
+                        <i class="fas fa-brain text-2xl opacity-50"></i>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 bg-white/30 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <span class="font-semibold">Tips Menabung</span>
+                            </div>
+                            <p class="text-sm opacity-90">Mulai dengan mencatat semua pengeluaran kecil untuk memahami pola belanja Anda</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 bg-white/30 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <span class="font-semibold">Langkah Pertama</span>
+                            </div>
+                            <p class="text-sm opacity-90">Tambahkan transaksi pertama Anda untuk mulai melihat analisis keuangan</p>
+                        </div>
+                        <div class="bg-white/20 rounded-lg p-4 backdrop-blur-sm">
+                            <div class="flex items-center mb-2">
+                                <div class="w-8 h-8 bg-white/30 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-bullseye"></i>
+                                </div>
+                                <span class="font-semibold">Target Awal</span>
+                            </div>
+                            <p class="text-sm opacity-90">Set target tabungan sederhana, misal 10% dari pemasukan bulanan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions Page -->
+            <div id="transactionsPage" class="page-content hidden">
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <h2 class="text-2xl font-bold text-gray-900">Manajemen Transaksi</h2>
+                            <p class="text-gray-600">Mulai kelola semua pemasukan dan pengeluaran Anda</p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="exportTransactions()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center">
+                                <i class="fas fa-download mr-2"></i> Export
+                            </button>
+                            <button onclick="importTransactions()" class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition flex items-center">
+                                <i class="fas fa-upload mr-2"></i> Import
+                            </button>
+                            <button onclick="showAddTransaction()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition flex items-center">
+                                <i class="fas fa-plus mr-2"></i> Transaksi Baru
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-arrow-down text-green-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Total Pemasukan</p>
+                                    <p id="totalIncome" class="font-bold text-lg">Rp 0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-arrow-up text-red-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Total Pengeluaran</p>
+                                    <p id="totalExpense" class="font-bold text-lg">Rp 0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-exchange-alt text-blue-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Jumlah Transaksi</p>
+                                    <p id="totalTransactions" class="font-bold text-lg">0</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mr-3">
+                                    <i class="fas fa-calendar-alt text-purple-600"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-gray-500">Transaksi Hari Ini</p>
+                                    <p id="todayTransactions" class="font-bold text-lg">0</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="bg-white rounded-xl shadow-soft p-6 mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Periode</label>
+                            <input type="text" id="filterDateRange" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Pilih Periode">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipe</label>
+                            <select id="filterType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">Semua Tipe</option>
+                                <option value="income">Pemasukan</option>
+                                <option value="expense">Pengeluaran</option>
+                                <option value="transfer">Transfer</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                            <select id="filterCategory" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                <option value="">Semua Kategori</option>
+                                <!-- Categories loaded dynamically -->
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <div class="flex space-x-2 w-full">
+                                <button onclick="applyFilters()" class="flex-1 bg-primary text-white py-2 px-4 rounded-lg hover:bg-primary-dark transition">
+                                    Terapkan
+                                </button>
+                                <button onclick="resetFilters()" class="flex-1 border border-gray-300 py-2 px-4 rounded-lg hover:bg-gray-50 transition">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="bg-white rounded-xl shadow-soft overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                        <div>
+                            <h4 class="font-bold text-gray-900">Semua Transaksi</h4>
+                            <p id="transactionCount" class="text-sm text-gray-500">0 transaksi ditemukan</p>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <div class="relative">
+                                <input type="text" id="searchTransaction" placeholder="Cari transaksi..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent w-64">
+                                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="toggleSelectAll()" id="selectAllBtn" class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                                    <i class="fas fa-check-square"></i>
+                                </button>
+                                <button onclick="bulkDelete()" id="bulkDeleteBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 hidden">
+                                    <i class="fas fa-trash mr-2"></i> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-8 text-center">
+                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
+                            <i class="fas fa-exchange-alt text-gray-400 text-3xl"></i>
+                        </div>
+                        <h4 class="text-xl font-bold text-gray-900 mb-3">Belum ada transaksi</h4>
+                        <p class="text-gray-600 mb-6 max-w-md mx-auto">
+                            Mulai catat transaksi keuangan Anda untuk melihat analisis lengkap dan mengelola pengeluaran dengan lebih baik
+                        </p>
+                        <div class="flex justify-center space-x-4">
+                            <button onclick="showAddTransaction()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition font-medium">
+                                <i class="fas fa-plus mr-2"></i> Tambah Transaksi
+                            </button>
+                            <button onclick="setupInitialCategories()" class="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">
+                                <i class="fas fa-tags mr-2"></i> Setup Kategori
+                            </button>
+                        </div>
+                    </div>
+                    <div id="transactionsContainer" class="hidden">
+                        <!-- Transactions table will be loaded here when there are transactions -->
+                    </div>
+                    <div id="transactionsPagination" class="px-6 py-4 border-t border-gray-200 flex justify-between items-center hidden">
+                        <div class="text-sm text-gray-500">
+                            Menampilkan <span id="pageStart">1</span>-<span id="pageEnd">10</span> dari <span id="totalItems">0</span> transaksi
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="prevPage()" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div id="pagination" class="flex items-center space-x-1">
+                                <!-- Pagination will be generated here -->
+                            </div>
+                            <button onclick="nextPage()" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-lg hover:bg-gray-50">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Page -->
+            <div id="budgetPage" class="page-content hidden">
+                <!-- Budget page content -->
+                <div class="text-center py-16">
+                    <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-chart-pie text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Halaman Anggaran</h3>
+                    <p class="text-gray-600 mb-6">Fitur anggaran lengkap dengan tracking dan notifikasi</p>
+                    <button onclick="showComingSoon()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Debts Page -->
+            <div id="debtsPage" class="page-content hidden">
+                <!-- Debts page content -->
+                <div class="text-center py-16">
+                    <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-handshake text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Halaman Hutang & Piutang</h3>
+                    <p class="text-gray-600 mb-6">Kelola hutang dan piutang dengan sistem reminder otomatis</p>
+                    <button onclick="showComingSoon()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Goals Page -->
+            <div id="goalsPage" class="page-content hidden">
+                <!-- Goals page content -->
+                <div class="text-center py-16">
+                    <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-bullseye text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Halaman Target Keuangan</h3>
+                    <p class="text-gray-600 mb-6">Set target keuangan dan track progres menuju pencapaian</p>
+                    <button onclick="showComingSoon()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Investments Page -->
+            <div id="investmentsPage" class="page-content hidden">
+                <!-- Investments page content -->
+                <div class="text-center py-16">
+                    <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-chart-line text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Halaman Investasi</h3>
+                    <p class="text-gray-600 mb-6">Kelola portofolio investasi dengan analisis risiko</p>
+                    <button onclick="showComingSoon()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analyticsPage" class="page-content hidden">
+                <!-- Analytics page content -->
+                <div class="text-center py-16">
+                    <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-chart-bar text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Halaman Analytics</h3>
+                    <p class="text-gray-600 mb-6">Analisis mendalam dengan machine learning insights</p>
+                    <button onclick="showComingSoon()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reportsPage" class="page-content hidden">
+                <!-- Reports page content -->
+                <div class="text-center py-16">
+                    <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-file-alt text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Halaman Laporan</h3>
+                    <p class="text-gray-600 mb-6">Generate laporan profesional dengan berbagai template</p>
+                    <button onclick="showComingSoon()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settingsPage" class="page-content hidden">
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold mb-2">Pengaturan Aplikasi</h3>
+                    <p class="text-gray-600">Atur preferensi aplikasi Anda</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- General Settings -->
+                    <div class="bg-white rounded-xl shadow-soft p-5">
+                        <h4 class="font-bold mb-4">Pengaturan Umum</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Mata Uang</label>
+                                <select id="currencySelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                    <option value="IDR" selected>IDR (Rp)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="EUR">EUR (€)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Format Tanggal</label>
+                                <select id="dateFormatSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                    <option value="id-ID" selected>DD/MM/YYYY</option>
+                                    <option value="en-US">MM/DD/YYYY</option>
+                                    <option value="en-GB">YYYY-MM-DD</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-2">Bahasa</label>
+                                <select id="languageSelect" class="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white">
+                                    <option value="id" selected>Bahasa Indonesia</option>
+                                    <option value="en">English</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Management -->
+                    <div class="bg-white rounded-xl shadow-soft p-5">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold">Manajemen Kategori</h4>
+                            <button onclick="showAddCategoryModal()" class="text-sm text-primary hover:text-primary-dark">
+                                <i class="fas fa-plus mr-1"></i>Tambah
+                            </button>
+                        </div>
+                        <div class="space-y-3 max-h-64 overflow-y-auto" id="categoriesList">
+                            <div class="text-center py-4">
+                                <i class="fas fa-tags text-gray-400 text-2xl mb-2"></i>
+                                <p class="text-gray-500 text-sm">Belum ada kategori</p>
+                                <button onclick="setupDefaultCategories()" class="mt-2 text-primary hover:text-primary-dark text-sm">
+                                    Setup kategori default
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Management -->
+                    <div class="bg-white rounded-xl shadow-soft p-5 lg:col-span-2">
+                        <h4 class="font-bold mb-4">Manajemen Data</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <button onclick="exportAllData()" class="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-center transition">
+                                <i class="fas fa-download text-xl mb-2 text-blue-500"></i>
+                                <p class="font-medium">Export Data</p>
+                                <p class="text-sm text-gray-500">Download semua data</p>
+                            </button>
+                            <button onclick="importData()" class="p-4 border border-gray-300 rounded-lg hover:bg-gray-50 text-center transition">
+                                <i class="fas fa-upload text-xl mb-2 text-green-500"></i>
+                                <p class="font-medium">Import Data</p>
+                                <p class="text-sm text-gray-500">Upload file backup</p>
+                            </button>
+                            <button onclick="clearAllData()" class="p-4 border border-red-300 rounded-lg hover:bg-red-50 text-center transition">
+                                <i class="fas fa-trash text-xl mb-2 text-red-500"></i>
+                                <p class="font-medium">Reset Aplikasi</p>
+                                <p class="text-sm text-red-500">Kembali ke kondisi awal</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profilePage" class="page-content hidden">
+                <!-- Profile page content -->
+                <div class="text-center py-16">
+                    <div class="w-24 h-24 bg-gradient-to-r from-primary to-secondary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i class="fas fa-user text-white text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Halaman Profil</h3>
+                    <p class="text-gray-600 mb-6">Kelola profil dan preferensi pengguna</p>
+                    <button onclick="showComingSoon()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                        Segera Hadir
+                    </button>
+                </div>
+            </div>
+        </main>
+
+        <!-- Modals -->
+        <!-- Add Transaction Modal -->
+        <div id="addTransactionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-2xl mx-4 animate__animated animate__bounceIn">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gray-900">Tambah Transaksi Baru</h3>
+                        <button onclick="closeModal('addTransactionModal')" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <!-- Transaction form -->
+                    <div class="space-y-6">
+                        <!-- Transaction type selection -->
+                        <div class="grid grid-cols-3 gap-4">
+                            <button onclick="selectTransactionType('income')" class="transaction-type-select">
+                                <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-2 mx-auto">
+                                    <i class="fas fa-arrow-down text-green-600"></i>
+                                </div>
+                                <span class="font-medium">Pemasukan</span>
+                            </button>
+                            <button onclick="selectTransactionType('expense')" class="transaction-type-select active">
+                                <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-2 mx-auto">
+                                    <i class="fas fa-arrow-up text-red-600"></i>
+                                </div>
+                                <span class="font-medium">Pengeluaran</span>
+                            </button>
+                            <button onclick="selectTransactionType('transfer')" class="transaction-type-select">
+                                <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-2 mx-auto">
+                                    <i class="fas fa-exchange-alt text-blue-600"></i>
+                                </div>
+                                <span class="font-medium">Transfer</span>
+                            </button>
+                        </div>
+
+                        <!-- Form fields -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
+                                <input type="text" id="transactionDate" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="DD/MM/YYYY">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">Rp</span>
+                                    <input type="number" id="transactionAmount" class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0" min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
+                                <select id="transactionCategory" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="" disabled selected>Pilih kategori</option>
+                                    <!-- Categories loaded dynamically -->
+                                </select>
+                                <p id="noCategoryMessage" class="text-sm text-gray-500 mt-1 hidden">
+                                    Belum ada kategori. 
+                                    <a href="#" onclick="showAddCategoryModal()" class="text-primary hover:text-primary-dark">Tambah kategori</a>
+                                </p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Metode Pembayaran</label>
+                                <select id="transactionMethod" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
+                                    <option value="cash">Cash</option>
+                                    <option value="bank_transfer">Transfer Bank</option>
+                                    <option value="credit_card">Kartu Kredit</option>
+                                    <option value="ewallet">E-Wallet</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Deskripsi</label>
+                            <textarea id="transactionDescription" rows="3" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Deskripsi transaksi..."></textarea>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="isRecurring" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Transaksi berulang</span>
+                            </label>
+                            <label class="flex items-center">
+                                <input type="checkbox" id="addAttachment" class="w-4 h-4 text-primary rounded focus:ring-primary">
+                                <span class="ml-2 text-sm text-gray-700">Lampirkan file</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end space-x-3">
+                        <button onclick="closeModal('addTransactionModal')" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                            Batal
+                        </button>
+                        <button onclick="saveTransaction()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition flex items-center">
+                            <i class="fas fa-save mr-2"></i> Simpan Transaksi
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Category Modal -->
+        <div id="addCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md mx-4 animate__animated animate__bounceIn">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gray-900">Tambah Kategori Baru</h3>
+                        <button onclick="closeModal('addCategoryModal')" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Kategori</label>
+                            <input type="text" id="categoryName" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Contoh: Makanan">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tipe Kategori</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <button onclick="selectCategoryType('expense')" class="category-type-btn active">
+                                    <i class="fas fa-arrow-up text-red-500 text-lg mb-1"></i>
+                                    <span>Pengeluaran</span>
+                                </button>
+                                <button onclick="selectCategoryType('income')" class="category-type-btn">
+                                    <i class="fas fa-arrow-down text-green-500 text-lg mb-1"></i>
+                                    <span>Pemasukan</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Warna</label>
+                            <div class="grid grid-cols-6 gap-2">
+                                <button type="button" onclick="selectCategoryColor('#EF4444')" class="color-option w-8 h-8 rounded-full bg-red-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="selectCategoryColor('#F59E0B')" class="color-option w-8 h-8 rounded-full bg-yellow-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="selectCategoryColor('#10B981')" class="color-option w-8 h-8 rounded-full bg-green-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="selectCategoryColor('#3B82F6')" class="color-option w-8 h-8 rounded-full bg-blue-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="selectCategoryColor('#8B5CF6')" class="color-option w-8 h-8 rounded-full bg-purple-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="selectCategoryColor('#EC4899')" class="color-option w-8 h-8 rounded-full bg-pink-500 border-2 border-transparent hover:border-gray-300"></button>
+                            </div>
+                            <input type="hidden" id="categoryColor" value="#3B82F6">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Icon</label>
+                            <div class="grid grid-cols-6 gap-2">
+                                <button type="button" onclick="selectCategoryIcon('fa-utensils')" class="icon-option p-2 border rounded-lg hover:bg-gray-50 text-center">
+                                    <i class="fas fa-utensils text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectCategoryIcon('fa-car')" class="icon-option p-2 border rounded-lg hover:bg-gray-50 text-center">
+                                    <i class="fas fa-car text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectCategoryIcon('fa-home')" class="icon-option p-2 border rounded-lg hover:bg-gray-50 text-center">
+                                    <i class="fas fa-home text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectCategoryIcon('fa-shopping-cart')" class="icon-option p-2 border rounded-lg hover:bg-gray-50 text-center">
+                                    <i class="fas fa-shopping-cart text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectCategoryIcon('fa-heart-pulse')" class="icon-option p-2 border rounded-lg hover:bg-gray-50 text-center">
+                                    <i class="fas fa-heart-pulse text-gray-600"></i>
+                                </button>
+                                <button type="button" onclick="selectCategoryIcon('fa-graduation-cap')" class="icon-option p-2 border rounded-lg hover:bg-gray-50 text-center">
+                                    <i class="fas fa-graduation-cap text-gray-600"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" id="categoryIcon" value="fa-utensils">
+                        </div>
+                    </div>
+
+                    <div class="mt-8 flex justify-end space-x-3">
+                        <button onclick="closeModal('addCategoryModal')" class="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition">
+                            Batal
+                        </button>
+                        <button onclick="saveCategory()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition">
+                            Simpan Kategori
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Stats Modal -->
+        <div id="quickStatsModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-2xl shadow-soft-lg w-full max-w-md mx-4 animate__animated animate__slideInUp">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-gray-900">📊 Quick Stats</h3>
+                        <button onclick="closeModal('quickStatsModal')" class="text-gray-400 hover:text-gray-600">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <div class="space-y-4">
+                        <div class="text-center py-4">
+                            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                                <i class="fas fa-chart-bar text-gray-400 text-2xl"></i>
+                            </div>
+                            <p class="text-gray-600 mb-2">Belum ada data statistik</p>
+                            <p class="text-sm text-gray-500">Mulai catat transaksi untuk melihat analisis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Panel -->
+        <div id="notificationPanel" class="fixed right-4 top-20 w-80 bg-white rounded-xl shadow-soft-lg border border-gray-200 z-50 hidden">
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-bold text-gray-900">Notifikasi</h4>
+                    <button onclick="markAllAsRead()" class="text-sm text-primary hover:text-primary-dark">
+                        Tandai semua dibaca
+                    </button>
+                </div>
+            </div>
+            <div class="max-h-96 overflow-y-auto">
+                <div class="p-4 text-center text-gray-500">
+                    <i class="fas fa-bell-slash text-2xl mb-2"></i>
+                    <p>Tidak ada notifikasi</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notifications -->
+        <div id="toastContainer" class="fixed top-4 right-4 z-50 space-y-3"></div>
+    </div>
+
+    <!-- JavaScript Application -->
+    <script>
+        // ===== APPLICATION STATE =====
+        const AppState = {
+            // User Data
+            user: {
+                name: 'Pengguna',
+                email: '',
+                currency: 'IDR',
+                language: 'id',
+                dateFormat: 'id-ID'
+            },
+            
+            // Categories - EMPTY
+            categories: [],
+            
+            // Transactions - EMPTY
+            transactions: [],
+            
+            // Application State
+            currentPage: 'dashboard',
+            selectedTransactionIds: new Set(),
+            currentFilters: {},
+            currentPageNumber: 1,
+            itemsPerPage: 10,
+            charts: {},
+            modals: {},
+            selectedCategoryType: 'expense',
+            selectedCategoryColor: '#3B82F6',
+            selectedCategoryIcon: 'fa-utensils'
+        };
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simulate loading progress
+            simulateLoading();
+            
+            // Initialize date pickers
+            initializeDatePickers();
+            
+            // Initialize tooltips
+            initializeTooltips();
+            
+            // Load data from localStorage
+            loadUserData();
+            loadCategories();
+            loadTransactions();
+            
+            // Set current date
+            updateCurrentDate();
+            
+            // Initialize UI
+            updateDashboard();
+            updateCategoryDropdowns();
+            updateCategoriesList();
+        });
+
+        // ===== LOADING SIMULATION =====
+        function simulateLoading() {
+            const progressBar = document.getElementById('loadingProgress');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 20;
+                if (progress > 100) progress = 100;
+                progressBar.style.width = progress + '%';
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('loadingScreen').classList.add('hidden');
+                        document.getElementById('app').classList.remove('hidden');
+                        showToast('FinancePro Ultimate siap digunakan!', 'success');
+                    }, 500);
+                }
+            }, 200);
+        }
+
+        // ===== DATE PICKERS =====
+        function initializeDatePickers() {
+            // Transaction date picker
+            flatpickr("#transactionDate", {
+                dateFormat: "d/m/Y",
+                defaultDate: "today",
+                locale: "id"
+            });
+            
+            // Filter date range picker
+            flatpickr("#filterDateRange", {
+                mode: "range",
+                dateFormat: "d/m/Y",
+                locale: "id"
+            });
+        }
+
+        // ===== TOOLTIPS =====
+        function initializeTooltips() {
+            tippy('[data-tippy-content]', {
+                theme: 'light',
+                animation: 'scale',
+                duration: 200
+            });
+        }
+
+        // ===== DATA MANAGEMENT =====
+        function loadUserData() {
+            const savedUser = localStorage.getItem('financepro_user');
+            if (savedUser) {
+                AppState.user = JSON.parse(savedUser);
+            }
+            document.getElementById('userName').textContent = AppState.user.name;
+            
+            // Update settings dropdowns
+            document.getElementById('currencySelect').value = AppState.user.currency;
+            document.getElementById('dateFormatSelect').value = AppState.user.dateFormat;
+            document.getElementById('languageSelect').value = AppState.user.language;
+        }
+
+        function loadCategories() {
+            const savedCategories = localStorage.getItem('financepro_categories');
+            if (savedCategories) {
+                AppState.categories = JSON.parse(savedCategories);
+            }
+        }
+
+        function loadTransactions() {
+            const savedTransactions = localStorage.getItem('financepro_transactions');
+            if (savedTransactions) {
+                AppState.transactions = JSON.parse(savedTransactions);
+            }
+        }
+
+        function saveUserData() {
+            localStorage.setItem('financepro_user', JSON.stringify(AppState.user));
+        }
+
+        function saveCategories() {
+            localStorage.setItem('financepro_categories', JSON.stringify(AppState.categories));
+        }
+
+        function saveTransactions() {
+            localStorage.setItem('financepro_transactions', JSON.stringify(AppState.transactions));
+        }
+
+        // ===== UI UPDATES =====
+        function updateCurrentDate() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', options);
+        }
+
+        function updateDashboard() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            let monthlyIncome = 0;
+            let monthlyExpense = 0;
+            
+            AppState.transactions.forEach(transaction => {
+                const transDate = new Date(transaction.date);
+                if (transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear) {
+                    if (transaction.type === 'income') {
+                        monthlyIncome += transaction.amount;
+                    } else {
+                        monthlyExpense += transaction.amount;
+                    }
+                }
+            });
+            
+            const totalBalance = monthlyIncome - monthlyExpense;
+            const savingsRate = monthlyIncome > 0 ? ((totalBalance / monthlyIncome) * 100).toFixed(1) : 0;
+            
+            // Update UI
+            document.getElementById('currentBalance').textContent = formatCurrency(totalBalance);
+            document.getElementById('currentIncome').textContent = formatCurrency(monthlyIncome);
+            document.getElementById('currentExpense').textContent = formatCurrency(monthlyExpense);
+            document.getElementById('totalBalance').textContent = formatCurrency(totalBalance);
+            document.getElementById('monthlyIncome').textContent = formatCurrency(monthlyIncome);
+            document.getElementById('monthlyExpense').textContent = formatCurrency(monthlyExpense);
+            document.getElementById('savingsRate').textContent = savingsRate + '%';
+            
+            // Update progress bars
+            const savingsProgress = Math.min((savingsRate / 20) * 100, 100);
+            const savingsBar = document.querySelector('#savingsRate').parentElement.nextElementSibling.querySelector('.bg-purple-500');
+            if (savingsBar) {
+                savingsBar.style.width = savingsProgress + '%';
+            }
+            
+            // Update transaction counts
+            updateTransactionCounts();
+        }
+
+        function updateTransactionCounts() {
+            const totalIncome = AppState.transactions
+                .filter(t => t.type === 'income')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const totalExpense = AppState.transactions
+                .filter(t => t.type === 'expense')
+                .reduce((sum, t) => sum + t.amount, 0);
+            
+            const today = new Date().toDateString();
+            const todayCount = AppState.transactions.filter(t => {
+                const transDate = new Date(t.date).toDateString();
+                return transDate === today;
+            }).length;
+            
+            document.getElementById('totalIncome').textContent = formatCurrency(totalIncome);
+            document.getElementById('totalExpense').textContent = formatCurrency(totalExpense);
+            document.getElementById('totalTransactions').textContent = AppState.transactions.length;
+            document.getElementById('todayTransactions').textContent = todayCount;
+            document.getElementById('transactionCount').textContent = `${AppState.transactions.length} transaksi ditemukan`;
+        }
+
+        function updateCategoryDropdowns() {
+            const categorySelects = [
+                'transactionCategory',
+                'filterCategory'
+            ];
+            
+            categorySelects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    // Clear existing options
+                    while (select.options.length > 0) {
+                        select.remove(0);
+                    }
+                    
+                    // Add default option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Pilih kategori';
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    select.appendChild(defaultOption);
+                    
+                    // If no categories, show message
+                    if (AppState.categories.length === 0) {
+                        const noCatOption = document.createElement('option');
+                        noCatOption.value = '';
+                        noCatOption.textContent = 'Belum ada kategori';
+                        noCatOption.disabled = true;
+                        select.appendChild(noCatOption);
+                    } else {
+                        // Group by type
+                        const incomeCategories = AppState.categories.filter(c => c.type === 'income');
+                        const expenseCategories = AppState.categories.filter(c => c.type === 'expense');
+                        
+                        if (incomeCategories.length > 0) {
+                            const optgroup = document.createElement('optgroup');
+                            optgroup.label = '💰 Pemasukan';
+                            incomeCategories.forEach(category => {
+                                const option = document.createElement('option');
+                                option.value = category.id;
+                                option.textContent = category.name;
+                                optgroup.appendChild(option);
+                            });
+                            select.appendChild(optgroup);
+                        }
+                        
+                        if (expenseCategories.length > 0) {
+                            const optgroup = document.createElement('optgroup');
+                            optgroup.label = '💸 Pengeluaran';
+                            expenseCategories.forEach(category => {
+                                const option = document.createElement('option');
+                                option.value = category.id;
+                                option.textContent = category.name;
+                                optgroup.appendChild(option);
+                            });
+                            select.appendChild(optgroup);
+                        }
+                    }
+                }
+            });
+            
+            // Show/hide no category message in transaction form
+            const noCategoryMessage = document.getElementById('noCategoryMessage');
+            if (noCategoryMessage) {
+                if (AppState.categories.length === 0) {
+                    noCategoryMessage.classList.remove('hidden');
+                } else {
+                    noCategoryMessage.classList.add('hidden');
+                }
+            }
+        }
+
+        function updateCategoriesList() {
+            const container = document.getElementById('categoriesList');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (AppState.categories.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-4">
+                        <i class="fas fa-tags text-gray-400 text-2xl mb-2"></i>
+                        <p class="text-gray-500 text-sm">Belum ada kategori</p>
+                        <button onclick="setupDefaultCategories()" class="mt-2 text-primary hover:text-primary-dark text-sm">
+                            Setup kategori default
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group by type
+            const incomeCategories = AppState.categories.filter(c => c.type === 'income');
+            const expenseCategories = AppState.categories.filter(c => c.type === 'expense');
+            
+            if (incomeCategories.length > 0) {
+                const incomeHeader = document.createElement('div');
+                incomeHeader.className = 'font-medium text-gray-700 mb-2 text-sm';
+                incomeHeader.textContent = '💰 Pemasukan';
+                container.appendChild(incomeHeader);
+                
+                incomeCategories.forEach(category => {
+                    const categoryElement = document.createElement('div');
+                    categoryElement.className = 'flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg mb-1';
+                    categoryElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background-color: ${category.color}20">
+                                <i class="${category.icon}" style="color: ${category.color}"></i>
+                            </div>
+                            <span>${category.name}</span>
+                        </div>
+                        <button onclick="deleteCategory(${category.id})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    `;
+                    container.appendChild(categoryElement);
+                });
+            }
+            
+            if (expenseCategories.length > 0) {
+                const expenseHeader = document.createElement('div');
+                expenseHeader.className = 'font-medium text-gray-700 mb-2 text-sm mt-4';
+                expenseHeader.textContent = '💸 Pengeluaran';
+                container.appendChild(expenseHeader);
+                
+                expenseCategories.forEach(category => {
+                    const categoryElement = document.createElement('div');
+                    categoryElement.className = 'flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg mb-1';
+                    categoryElement.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-3" style="background-color: ${category.color}20">
+                                <i class="${category.icon}" style="color: ${category.color}"></i>
+                            </div>
+                            <span>${category.name}</span>
+                        </div>
+                        <button onclick="deleteCategory(${category.id})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    `;
+                    container.appendChild(categoryElement);
+                });
+            }
+        }
+
+        // ===== PAGE NAVIGATION =====
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+                page.classList.remove('animate__fadeIn');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected page
+            const pageElement = document.getElementById(`${pageName}Page`);
+            if (pageElement) {
+                pageElement.classList.remove('hidden');
+                pageElement.classList.add('animate__animated', 'animate__fadeIn');
+            }
+            
+            // Set active tab
+            document.querySelector(`[onclick="showPage('${pageName}')"]`)?.classList.add('active');
+            
+            // Update app state
+            AppState.currentPage = pageName;
+            
+            // Update page-specific data
+            if (pageName === 'transactions') {
+                updateTransactionTable();
+            } else if (pageName === 'dashboard') {
+                updateDashboard();
+            } else if (pageName === 'settings') {
+                updateCategoriesList();
+            }
+        }
+
+        // ===== TRANSACTION MANAGEMENT =====
+        function showAddTransaction() {
+            // Reset form
+            document.getElementById('transactionDate').value = '';
+            document.getElementById('transactionAmount').value = '';
+            document.getElementById('transactionCategory').selectedIndex = 0;
+            document.getElementById('transactionMethod').selectedIndex = 0;
+            document.getElementById('transactionDescription').value = '';
+            document.getElementById('isRecurring').checked = false;
+            document.getElementById('addAttachment').checked = false;
+            
+            // Reset transaction type selection
+            document.querySelectorAll('.transaction-type-select').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('.transaction-type-select[onclick*="expense"]').classList.add('active');
+            
+            // Show modal
+            showModal('addTransactionModal');
+        }
+
+        function selectTransactionType(type) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.transaction-type-select').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.closest('.transaction-type-select').classList.add('active');
+        }
+
+        function saveTransaction() {
+            // Get form values
+            const date = document.getElementById('transactionDate').value;
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const categoryId = parseInt(document.getElementById('transactionCategory').value);
+            const method = document.getElementById('transactionMethod').value;
+            const description = document.getElementById('transactionDescription').value;
+            const isRecurring = document.getElementById('isRecurring').checked;
+            
+            // Validation
+            if (!date) {
+                showToast('Harap pilih tanggal transaksi', 'error');
+                return;
+            }
+            
+            if (!amount || amount <= 0) {
+                showToast('Harap masukkan jumlah yang valid', 'error');
+                return;
+            }
+            
+            if (!categoryId) {
+                showToast('Harap pilih kategori', 'error');
+                return;
+            }
+            
+            // Get selected transaction type
+            const activeTypeButton = document.querySelector('.transaction-type-select.active');
+            let type = 'expense'; // default
+            if (activeTypeButton) {
+                if (activeTypeButton.textContent.includes('Pemasukan')) {
+                    type = 'income';
+                } else if (activeTypeButton.textContent.includes('Transfer')) {
+                    type = 'transfer';
+                }
+            }
+            
+            // Create transaction object
+            const newTransaction = {
+                id: Date.now(),
+                date: formatDateForStorage(date),
+                type: type,
+                categoryId: categoryId,
+                amount: amount,
+                description: description,
+                method: method,
+                status: 'completed',
+                isRecurring: isRecurring,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Add to transactions
+            AppState.transactions.push(newTransaction);
+            
+            // Save to localStorage
+            saveTransactions();
+            
+            // Update UI
+            updateTransactionTable();
+            updateDashboard();
+            
+            // Close modal
+            closeModal('addTransactionModal');
+            
+            // Show success message
+            showToast('Transaksi berhasil disimpan!', 'success');
+        }
+
+        function updateTransactionTable() {
+            const container = document.getElementById('transactionsContainer');
+            const emptyState = document.querySelector('#transactionsPage .text-center');
+            const pagination = document.getElementById('transactionsPagination');
+            
+            if (!container || !emptyState || !pagination) return;
+            
+            if (AppState.transactions.length === 0) {
+                container.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                pagination.classList.add('hidden');
+                return;
+            }
+            
+            // Show table and hide empty state
+            container.classList.remove('hidden');
+            emptyState.classList.add('hidden');
+            pagination.classList.remove('hidden');
+            
+            // Update table content
+            // Note: In a full implementation, you would render the table rows here
+            // For brevity, we're keeping the empty state for now
+        }
+
+        // ===== CATEGORY MANAGEMENT =====
+        function showAddCategoryModal() {
+            // Reset form
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryColor').value = '#3B82F6';
+            document.getElementById('categoryIcon').value = 'fa-utensils';
+            
+            // Reset category type selection
+            document.querySelectorAll('.category-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('.category-type-btn[onclick*="expense"]').classList.add('active');
+            AppState.selectedCategoryType = 'expense';
+            
+            // Reset color selection
+            document.querySelectorAll('.color-option').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-primary');
+            });
+            
+            // Reset icon selection
+            document.querySelectorAll('.icon-option').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white', 'border-primary');
+                btn.classList.add('border-gray-300', 'text-gray-600');
+            });
+            
+            showModal('addCategoryModal');
+        }
+
+        function selectCategoryType(type) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.category-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            event.target.closest('.category-type-btn').classList.add('active');
+            
+            // Update state
+            AppState.selectedCategoryType = type;
+        }
+
+        function selectCategoryColor(color) {
+            // Update visual selection
+            document.querySelectorAll('.color-option').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-primary');
+            });
+            event.target.classList.add('ring-2', 'ring-primary');
+            
+            // Update state
+            AppState.selectedCategoryColor = color;
+            document.getElementById('categoryColor').value = color;
+        }
+
+        function selectCategoryIcon(icon) {
+            // Update visual selection
+            document.querySelectorAll('.icon-option').forEach(btn => {
+                btn.classList.remove('bg-primary', 'text-white', 'border-primary');
+                btn.classList.add('border-gray-300', 'text-gray-600');
+            });
+            event.target.classList.remove('border-gray-300', 'text-gray-600');
+            event.target.classList.add('bg-primary', 'text-white', 'border-primary');
+            
+            // Update state
+            AppState.selectedCategoryIcon = icon;
+            document.getElementById('categoryIcon').value = icon;
+        }
+
+        function saveCategory() {
+            const name = document.getElementById('categoryName').value.trim();
+            const type = AppState.selectedCategoryType;
+            const color = AppState.selectedCategoryColor;
+            const icon = AppState.selectedCategoryIcon;
+            
+            // Validation
+            if (!name) {
+                showToast('Harap masukkan nama kategori', 'error');
+                return;
+            }
+            
+            // Check for duplicate names
+            const duplicate = AppState.categories.find(c => 
+                c.name.toLowerCase() === name.toLowerCase() && c.type === type
+            );
+            
+            if (duplicate) {
+                showToast('Kategori dengan nama ini sudah ada', 'error');
+                return;
+            }
+            
+            // Create category object
+            const newCategory = {
+                id: Date.now(),
+                name: name,
+                type: type,
+                color: color,
+                icon: icon,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Add to categories
+            AppState.categories.push(newCategory);
+            
+            // Save to localStorage
+            saveCategories();
+            
+            // Update UI
+            updateCategoryDropdowns();
+            updateCategoriesList();
+            
+            // Close modal
+            closeModal('addCategoryModal');
+            
+            // Show success message
+            showToast('Kategori berhasil ditambahkan!', 'success');
+        }
+
+        function deleteCategory(id) {
+            Swal.fire({
+                title: 'Hapus Kategori?',
+                text: "Kategori yang dihapus tidak dapat dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Ya, Hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Check if category is used in transactions
+                    const isUsed = AppState.transactions.some(t => t.categoryId === id);
+                    
+                    if (isUsed) {
+                        showToast('Kategori tidak dapat dihapus karena masih digunakan dalam transaksi', 'error');
+                        return;
+                    }
+                    
+                    // Remove category
+                    AppState.categories = AppState.categories.filter(c => c.id !== id);
+                    
+                    // Save to localStorage
+                    saveCategories();
+                    
+                    // Update UI
+                    updateCategoryDropdowns();
+                    updateCategoriesList();
+                    
+                    showToast('Kategori berhasil dihapus!', 'success');
+                }
+            });
+        }
+
+        function setupDefaultCategories() {
+            const defaultCategories = [
+                // Expense categories
+                { name: 'Makanan & Minuman', type: 'expense', color: '#EF4444', icon: 'fa-utensils' },
+                { name: 'Transportasi', type: 'expense', color: '#F59E0B', icon: 'fa-car' },
+                { name: 'Hiburan', type: 'expense', color: '#8B5CF6', icon: 'fa-film' },
+                { name: 'Kesehatan', type: 'expense', color: '#10B981', icon: 'fa-heart-pulse' },
+                { name: 'Belanja', type: 'expense', color: '#EC4899', icon: 'fa-shopping-bag' },
+                { name: 'Pendidikan', type: 'expense', color: '#06B6D4', icon: 'fa-graduation-cap' },
+                { name: 'Tagihan', type: 'expense', color: '#6366F1', icon: 'fa-file-invoice' },
+                
+                // Income categories
+                { name: 'Gaji', type: 'income', color: '#22C55E', icon: 'fa-money-bill-wave' },
+                { name: 'Freelance', type: 'income', color: '#14B8A6', icon: 'fa-laptop-code' },
+                { name: 'Investasi', type: 'income', color: '#3B82F6', icon: 'fa-chart-line' },
+                { name: 'Bonus', type: 'income', color: '#F97316', icon: 'fa-gift' }
+            ];
+            
+            // Add categories with unique IDs
+            defaultCategories.forEach((cat, index) => {
+                AppState.categories.push({
+                    id: Date.now() + index,
+                    ...cat,
+                    createdAt: new Date().toISOString()
+                });
+            });
+            
+            // Save to localStorage
+            saveCategories();
+            
+            // Update UI
+            updateCategoryDropdowns();
+            updateCategoriesList();
+            
+            showToast('Kategori default berhasil ditambahkan!', 'success');
+        }
+
+        // ===== SETTINGS =====
+        function setupInitialBudget() {
+            showToast('Fitur anggaran akan segera tersedia', 'info');
+        }
+
+        function setupInitialCategories() {
+            setupDefaultCategories();
+        }
+
+        // ===== MODAL MANAGEMENT =====
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showQuickStats() {
+            showModal('quickStatsModal');
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('hidden');
+        }
+
+        function markAllAsRead() {
+            showToast('Semua notifikasi ditandai sudah dibaca', 'info');
+            document.getElementById('notificationPanel').classList.add('hidden');
+        }
+
+        // ===== EXPORT/IMPORT =====
+        function exportTransactions() {
+            if (AppState.transactions.length === 0) {
+                showToast('Tidak ada data untuk diexport', 'warning');
+                return;
+            }
+            
+            const data = {
+                transactions: AppState.transactions,
+                categories: AppState.categories,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financepro-export-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Data berhasil diexport!', 'success');
+        }
+
+        function importTransactions() {
+            // Create file input
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        
+                        Swal.fire({
+                            title: 'Import Data?',
+                            html: `Anda akan mengimport:<br>
+                                   • ${data.transactions?.length || 0} transaksi<br>
+                                   • ${data.categories?.length || 0} kategori`,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3B82F6',
+                            cancelButtonColor: '#6B7280',
+                            confirmButtonText: 'Import',
+                            cancelButtonText: 'Batal'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                if (data.transactions) {
+                                    AppState.transactions = data.transactions;
+                                }
+                                if (data.categories) {
+                                    AppState.categories = data.categories;
+                                }
+                                
+                                saveTransactions();
+                                saveCategories();
+                                
+                                updateTransactionTable();
+                                updateDashboard();
+                                updateCategoryDropdowns();
+                                updateCategoriesList();
+                                
+                                showToast('Data berhasil diimport!', 'success');
+                            }
+                        });
+                    } catch (error) {
+                        showToast('Format file tidak valid', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function exportAllData() {
+            const data = {
+                user: AppState.user,
+                transactions: AppState.transactions,
+                categories: AppState.categories,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financepro-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Backup data berhasil!', 'success');
+        }
+
+        function importData() {
+            importTransactions();
+        }
+
+        function backupData() {
+            exportAllData();
+        }
+
+        function exportToPDF() {
+            showToast('Export PDF akan segera tersedia', 'info');
+        }
+
+        function clearAllData() {
+            Swal.fire({
+                title: 'Reset Aplikasi?',
+                text: "Semua data akan dihapus dan aplikasi akan kembali ke kondisi awal!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#EF4444',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Ya, Reset!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Clear localStorage
+                    localStorage.clear();
+                    
+                    // Reset AppState
+                    AppState.transactions = [];
+                    AppState.categories = [];
+                    
+                    // Save empty state
+                    saveTransactions();
+                    saveCategories();
+                    
+                    // Update UI
+                    updateDashboard();
+                    updateTransactionTable();
+                    updateCategoryDropdowns();
+                    updateCategoriesList();
+                    
+                    showToast('Aplikasi berhasil direset!', 'success');
+                }
+            });
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'decimal',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatDateForStorage(dateString) {
+            // Convert dd/mm/yyyy to yyyy-mm-dd
+            const parts = dateString.split('/');
+            if (parts.length === 3) {
+                return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+            }
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            
+            toast.className = `animate__animated animate__slideInRight ${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3`;
+            toast.innerHTML = `
+                <i class="fas ${icons[type]} text-xl"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.classList.remove('animate__slideInRight');
+                toast.classList.add('animate__slideOutRight');
+                setTimeout(() => {
+                    container.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
+        function showComingSoon() {
+            Swal.fire({
+                title: 'Segera Hadir!',
+                text: 'Fitur ini sedang dalam pengembangan dan akan segera tersedia.',
+                icon: 'info',
+                confirmButtonColor: '#3B82F6',
+                confirmButtonText: 'Mengerti'
+            });
+        }
+
+        function showFinancialTips() {
+            const tips = [
+                "💡 Mulai dengan mencatat SEMUA pengeluaran, sekecil apapun",
+                "💰 Set target tabungan 10% dari pemasukan bulanan",
+                "📊 Review pengeluaran mingguan untuk identifikasi kebocoran",
+                "🎯 Prioritaskan kebutuhan di atas keinginan",
+                "💳 Hindari pembelian impulsif - tunggu 24 jam sebelum membeli",
+                "🏦 Otomatiskan tabungan setiap kali gajian"
+            ];
+            
+            const randomTip = tips[Math.floor(Math.random() * tips.length)];
+            
+            Swal.fire({
+                title: 'Tips Keuangan',
+                html: `<p class="text-lg">${randomTip}</p>`,
+                icon: 'info',
+                confirmButtonColor: '#3B82F6',
+                confirmButtonText: 'Terima Kasih'
+            });
+        }
+
+        function showCategoryAnalysis() {
+            Swal.fire({
+                title: 'Analisis Kategori',
+                html: `<p>Mulai catat transaksi untuk melihat analisis kategori pengeluaran Anda!</p>`,
+                icon: 'info',
+                confirmButtonColor: '#3B82F6',
+                confirmButtonText: 'Mulai Catat'
+            });
+        }
+
+        function logout() {
+            Swal.fire({
+                title: 'Logout?',
+                text: "Anda akan keluar dari aplikasi.",
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3B82F6',
+                cancelButtonColor: '#6B7280',
+                confirmButtonText: 'Ya, Logout',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    showToast('Berhasil logout', 'success');
+                    setTimeout(() => {
+                        location.reload();
+                    }, 1500);
+                }
+            });
+        }
+
+        // ===== FILTERS & PAGINATION (Placeholders) =====
+        function applyFilters() {
+            showToast('Filter diterapkan', 'info');
+        }
+
+        function resetFilters() {
+            document.getElementById('filterDateRange').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterCategory').value = '';
+            showToast('Filter direset', 'info');
+        }
+
+        function prevPage() {
+            showToast('Halaman sebelumnya', 'info');
+        }
+
+        function nextPage() {
+            showToast('Halaman berikutnya', 'info');
+        }
+
+        function toggleSelectAll() {
+            showToast('Pilih semua', 'info');
+        }
+
+        function bulkDelete() {
+            showToast('Hapus massal', 'info');
+        }
+
+        // ===== CSS STYLES =====
+        document.head.insertAdjacentHTML('beforeend', `
+            <style>
+                .nav-tab {
+                    padding: 12px 20px;
+                    font-weight: 500;
+                    color: #6B7280;
+                    border-bottom: 3px solid transparent;
+                    white-space: nowrap;
+                    transition: all 0.2s;
+                }
+                .nav-tab:hover {
+                    color: #3B82F6;
+                }
+                .nav-tab.active {
+                    color: #3B82F6;
+                    border-bottom-color: #3B82F6;
+                }
+                .transaction-type-select {
+                    border: 2px solid #E5E7EB;
+                    border-radius: 12px;
+                    padding: 16px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                }
+                .transaction-type-select:hover {
+                    border-color: #3B82F6;
+                    transform: translateY(-2px);
+                }
+                .transaction-type-select.active {
+                    border-color: #3B82F6;
+                    background-color: #EFF6FF;
+                }
+                .category-type-btn {
+                    border: 2px solid #E5E7EB;
+                    border-radius: 8px;
+                    padding: 12px;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .category-type-btn:hover {
+                    border-color: #3B82F6;
+                }
+                .category-type-btn.active {
+                    border-color: #3B82F6;
+                    background-color: #EFF6FF;
+                }
+            </style>
+        `);
+    </script>
+</body>
+</html>

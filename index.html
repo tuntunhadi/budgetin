@@ -1,0 +1,1947 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinancePro - Money Manager Pribadi</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Date Picker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .slide-in {
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideIn {
+            from { transform: translateY(10px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        /* Print Styles */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .print-content {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-200">
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="fixed inset-0 bg-white dark:bg-gray-900 flex items-center justify-center z-50">
+        <div class="text-center">
+            <div class="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">Memuat aplikasi...</p>
+        </div>
+    </div>
+
+    <!-- App Container -->
+    <div id="app" class="hidden min-h-screen">
+        <!-- Mobile Menu Overlay -->
+        <div id="mobileMenuOverlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 hidden" onclick="toggleMobileMenu()"></div>
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="fixed left-0 top-0 h-screen w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-lg transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-40">
+            <!-- Logo -->
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-wallet text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-900 dark:text-white">FinancePro</h1>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">Money Manager</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="p-4 space-y-1">
+                <a href="#" onclick="showPage('dashboard')" class="nav-item active">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" onclick="showPage('transactions')" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Transaksi</span>
+                </a>
+                <a href="#" onclick="showPage('analysis')" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analisis</span>
+                </a>
+                <a href="#" onclick="showPage('budget')" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Anggaran</span>
+                </a>
+                <a href="#" onclick="showPage('debts')" class="nav-item">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <span>Hutang/Piutang</span>
+                </a>
+                <a href="#" onclick="showPage('goals')" class="nav-item">
+                    <i class="fas fa-bullseye"></i>
+                    <span>Target</span>
+                </a>
+                <a href="#" onclick="showPage('reports')" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Laporan</span>
+                </a>
+                <a href="#" onclick="showPage('settings')" class="nav-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Pengaturan</span>
+                </a>
+            </nav>
+
+            <!-- User Section -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
+                            <i class="fas fa-user text-blue-600 dark:text-blue-300"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium">Pengguna</p>
+                            <p class="text-xs text-gray-500">Premium</p>
+                        </div>
+                    </div>
+                    <button onclick="toggleDarkMode()" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-moon hidden dark:block"></i>
+                        <i class="fas fa-sun block dark:hidden"></i>
+                    </button>
+                </div>
+                <button onclick="backupData()" class="w-full mt-3 flex items-center justify-center space-x-2 p-2 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50">
+                    <i class="fas fa-database"></i>
+                    <span class="text-sm">Backup Data</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="lg:ml-64 min-h-screen">
+            <!-- Top Bar -->
+            <header class="sticky top-0 z-30 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                <div class="px-4 py-3 flex items-center justify-between">
+                    <!-- Mobile Menu Button -->
+                    <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+
+                    <!-- Page Title -->
+                    <div>
+                        <h2 id="pageTitle" class="text-xl font-bold text-gray-900 dark:text-white">Dashboard</h2>
+                        <p id="pageSubtitle" class="text-sm text-gray-500 dark:text-gray-400">Ringkasan keuangan Anda</p>
+                    </div>
+
+                    <!-- Date & Actions -->
+                    <div class="flex items-center space-x-4">
+                        <div class="hidden md:block text-right">
+                            <p id="currentDate" class="font-medium"></p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Hari ini</p>
+                        </div>
+                        <button onclick="showAddTransactionModal()" class="flex items-center space-x-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition">
+                            <i class="fas fa-plus"></i>
+                            <span class="hidden md:inline">Tambah Transaksi</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="p-4 md:p-6">
+                <!-- Dashboard Page -->
+                <div id="dashboardPage" class="page-content">
+                    <!-- Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <!-- Total Balance Card -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <p class="text-gray-500 dark:text-gray-400 text-sm">Saldo Total</p>
+                                    <h3 id="totalBalance" class="text-2xl font-bold mt-1">Rp 15.750.000</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-wallet text-blue-500 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center text-sm">
+                                <i class="fas fa-arrow-up text-green-500 mr-1"></i>
+                                <span class="text-green-500 font-medium">+12% dari bulan lalu</span>
+                            </div>
+                        </div>
+
+                        <!-- Income Card -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <p class="text-gray-500 dark:text-gray-400 text-sm">Pemasukan Bulan Ini</p>
+                                    <h3 id="monthlyIncome" class="text-2xl font-bold mt-1 text-green-600">Rp 8.500.000</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-arrow-down text-green-500 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-gray-500 dark:text-gray-400">85% dari target</span>
+                                </div>
+                                <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Expense Card -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <p class="text-gray-500 dark:text-gray-400 text-sm">Pengeluaran Bulan Ini</p>
+                                    <h3 id="monthlyExpense" class="text-2xl font-bold mt-1 text-red-600">Rp 4.250.000</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-arrow-up text-red-500 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center text-sm">
+                                    <span class="text-gray-500 dark:text-gray-400">65% dari anggaran</span>
+                                </div>
+                                <div class="w-24 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-red-500 h-2 rounded-full" style="width: 65%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Net Income Card -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <p class="text-gray-500 dark:text-gray-400 text-sm">Pendapatan Bersih</p>
+                                    <h3 id="netIncome" class="text-2xl font-bold mt-1 text-blue-600">Rp 4.250.000</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                                    <i class="fas fa-chart-line text-blue-500 text-xl"></i>
+                                </div>
+                            </div>
+                            <div class="text-sm">
+                                <div class="flex justify-between mb-1">
+                                    <span>Progress target bulanan</span>
+                                    <span>60%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Income vs Expense Chart -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-lg">Pemasukan vs Pengeluaran</h3>
+                                <select class="text-sm border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1 bg-transparent">
+                                    <option>6 Bulan Terakhir</option>
+                                    <option>1 Tahun Terakhir</option>
+                                    <option>YTD</option>
+                                </select>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="incomeExpenseChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Expense by Category Chart -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-bold text-lg">Pengeluaran per Kategori</h3>
+                                <button onclick="showAnalysisPage()" class="text-sm text-blue-500 hover:text-blue-600">
+                                    Lihat Detail
+                                </button>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow">
+                        <div class="p-5 border-b border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center justify-between">
+                                <h3 class="font-bold text-lg">Transaksi Terbaru</h3>
+                                <button onclick="showTransactionsPage()" class="text-sm text-blue-500 hover:text-blue-600">
+                                    Lihat Semua
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Tanggal</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Kategori</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Deskripsi</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Jumlah</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recentTransactions">
+                                    <!-- Transactions will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transactions Page -->
+                <div id="transactionsPage" class="page-content hidden">
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold mb-2">Manajemen Transaksi</h3>
+                        <p class="text-gray-500 dark:text-gray-400">Kelola semua transaksi keuangan Anda</p>
+                    </div>
+
+                    <!-- Filter Section -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 mb-6">
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex-1 min-w-[200px]">
+                                <label class="block text-sm font-medium mb-2">Periode</label>
+                                <input type="text" id="dateRangeFilter" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" placeholder="Pilih periode">
+                            </div>
+                            <div class="flex-1 min-w-[200px]">
+                                <label class="block text-sm font-medium mb-2">Tipe</label>
+                                <select id="typeFilter" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                    <option value="">Semua</option>
+                                    <option value="income">Pemasukan</option>
+                                    <option value="expense">Pengeluaran</option>
+                                </select>
+                            </div>
+                            <div class="flex-1 min-w-[200px]">
+                                <label class="block text-sm font-medium mb-2">Kategori</label>
+                                <select id="categoryFilter" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                    <option value="">Semua Kategori</option>
+                                    <!-- Categories will be loaded dynamically -->
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="applyFilters()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                    Terapkan
+                                </button>
+                                <button onclick="resetFilters()" class="ml-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    Reset
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transactions Table -->
+                    <div class="bg-white dark:bg-gray-800 rounded-xl shadow overflow-hidden">
+                        <div class="p-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold">Semua Transaksi</h4>
+                                <p id="transactionCount" class="text-sm text-gray-500 dark:text-gray-400">0 transaksi ditemukan</p>
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="exportTransactions()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-download mr-2"></i>Export
+                                </button>
+                                <button onclick="bulkDeleteTransactions()" id="bulkDeleteBtn" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 hidden">
+                                    <i class="fas fa-trash mr-2"></i>Hapus
+                                </button>
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="border-b border-gray-200 dark:border-gray-700">
+                                        <th class="p-4">
+                                            <input type="checkbox" id="selectAll" class="rounded border-gray-300">
+                                        </th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Tanggal</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Tipe</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Kategori</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Deskripsi</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Jumlah</th>
+                                        <th class="text-left p-4 text-sm font-medium text-gray-500 dark:text-gray-400">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allTransactions">
+                                    <!-- All transactions will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                            <div class="text-sm text-gray-500 dark:text-gray-400">
+                                Menampilkan <span id="currentPage">1-10</span> dari <span id="totalTransactions">0</span> transaksi
+                            </div>
+                            <div class="flex space-x-2">
+                                <button onclick="prevPage()" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div id="pagination" class="flex space-x-1">
+                                    <!-- Pagination will be generated here -->
+                                </div>
+                                <button onclick="nextPage()" class="px-3 py-1 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Page -->
+                <div id="analysisPage" class="page-content hidden">
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold mb-2">Analisis Keuangan</h3>
+                        <p class="text-gray-500 dark:text-gray-400">Analisis mendalam tentang keuangan Anda</p>
+                    </div>
+
+                    <!-- Tab Navigation -->
+                    <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+                        <div class="flex space-x-6">
+                            <button onclick="showAnalysisTab('overview')" class="analysis-tab active">Overview</button>
+                            <button onclick="showAnalysisTab('category')" class="analysis-tab">Per Kategori</button>
+                            <button onclick="showAnalysisTab('trend')" class="analysis-tab">Trend</button>
+                            <button onclick="showAnalysisTab('custom')" class="analysis-tab">Laporan Custom</button>
+                        </div>
+                    </div>
+
+                    <!-- Overview Tab -->
+                    <div id="overviewTab" class="analysis-tab-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                                <h4 class="font-bold mb-4">Perbandingan Bulanan</h4>
+                                <div class="h-72">
+                                    <canvas id="monthlyComparisonChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                                <h4 class="font-bold mb-4">Cash Flow Timeline</h4>
+                                <div class="h-72">
+                                    <canvas id="cashFlowChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <h4 class="font-bold mb-4">Financial Health Score</h4>
+                            <div class="flex items-center justify-center">
+                                <div class="relative w-48 h-48">
+                                    <canvas id="healthScoreChart"></canvas>
+                                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                        <span class="text-4xl font-bold">85</span>
+                                        <span class="text-gray-500 dark:text-gray-400">/100</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Saving Rate</p>
+                                    <p class="text-xl font-bold text-green-500">25%</p>
+                                </div>
+                                <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Debt Ratio</p>
+                                    <p class="text-xl font-bold text-yellow-500">12%</p>
+                                </div>
+                                <div class="text-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Budget Adherence</p>
+                                    <p class="text-xl font-bold text-blue-500">85%</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category Tab -->
+                    <div id="categoryTab" class="analysis-tab-content hidden">
+                        <div class="mb-6">
+                            <div class="flex flex-wrap gap-4">
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-sm font-medium mb-2">Pilih Kategori</label>
+                                    <select id="categorySelect" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                        <!-- Categories will be loaded -->
+                                    </select>
+                                </div>
+                                <div class="flex-1 min-w-[200px]">
+                                    <label class="block text-sm font-medium mb-2">Periode</label>
+                                    <select id="categoryPeriod" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                        <option value="6">6 Bulan Terakhir</option>
+                                        <option value="12">1 Tahun Terakhir</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                                <h4 class="font-bold mb-4">Trend Kategori</h4>
+                                <div class="h-64">
+                                    <canvas id="categoryTrendChart"></canvas>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                                <h4 class="font-bold mb-4">Perbandingan Kategori</h4>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full">
+                                        <thead>
+                                            <tr class="border-b border-gray-200 dark:border-gray-700">
+                                                <th class="text-left p-3 text-sm font-medium">Kategori</th>
+                                                <th class="text-left p-3 text-sm font-medium">Bulan Ini</th>
+                                                <th class="text-left p-3 text-sm font-medium">Bulan Lalu</th>
+                                                <th class="text-left p-3 text-sm font-medium">% Change</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="categoryComparisonTable">
+                                            <!-- Data will be loaded -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trend Tab -->
+                    <div id="trendTab" class="analysis-tab-content hidden">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 mb-6">
+                            <h4 class="font-bold mb-4">Income Trend</h4>
+                            <div class="h-72">
+                                <canvas id="incomeTrendChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <h4 class="font-bold mb-4">Expense Trend</h4>
+                            <div class="h-72">
+                                <canvas id="expenseTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Report Tab -->
+                    <div id="customTab" class="analysis-tab-content hidden">
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <h4 class="font-bold mb-4">Buat Laporan Custom</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium mb-2">Nama Laporan</label>
+                                        <input type="text" id="reportName" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" placeholder="Contoh: Laporan Q1 2024">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium mb-2">Periode</label>
+                                        <input type="text" id="reportDateRange" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" placeholder="Pilih periode">
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium mb-2">Tipe Chart</label>
+                                        <select id="chartType" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                            <option value="bar">Bar Chart</option>
+                                            <option value="line">Line Chart</option>
+                                            <option value="pie">Pie Chart</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium mb-2">Metrics</label>
+                                        <div class="space-y-2">
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="rounded border-gray-300" checked>
+                                                <span class="ml-2">Total Income</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="rounded border-gray-300" checked>
+                                                <span class="ml-2">Total Expense</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="rounded border-gray-300" checked>
+                                                <span class="ml-2">Net Income</span>
+                                            </label>
+                                            <label class="flex items-center">
+                                                <input type="checkbox" class="rounded border-gray-300">
+                                                <span class="ml-2">Category Breakdown</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label class="block text-sm font-medium mb-2">Filter Kategori</label>
+                                        <select id="reportCategoryFilter" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" multiple>
+                                            <!-- Categories will be loaded -->
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex justify-end space-x-3">
+                                <button onclick="generateReport()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                    Generate Report
+                                </button>
+                                <button onclick="saveReportTemplate()" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    Save Template
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Budget Page -->
+                <div id="budgetPage" class="page-content hidden">
+                    <!-- Budget page content will be added here -->
+                    <div class="text-center py-12">
+                        <i class="fas fa-chart-bar text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Halaman Anggaran</h3>
+                        <p class="text-gray-500">Fitur anggaran sedang dalam pengembangan</p>
+                    </div>
+                </div>
+
+                <!-- Debts Page -->
+                <div id="debtsPage" class="page-content hidden">
+                    <!-- Debts page content will be added here -->
+                    <div class="text-center py-12">
+                        <i class="fas fa-hand-holding-usd text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Halaman Hutang/Piutang</h3>
+                        <p class="text-gray-500">Fitur hutang/piutang sedang dalam pengembangan</p>
+                    </div>
+                </div>
+
+                <!-- Goals Page -->
+                <div id="goalsPage" class="page-content hidden">
+                    <!-- Goals page content will be added here -->
+                    <div class="text-center py-12">
+                        <i class="fas fa-bullseye text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Halaman Target</h3>
+                        <p class="text-gray-500">Fitur target sedang dalam pengembangan</p>
+                    </div>
+                </div>
+
+                <!-- Reports Page -->
+                <div id="reportsPage" class="page-content hidden">
+                    <!-- Reports page content will be added here -->
+                    <div class="text-center py-12">
+                        <i class="fas fa-file-alt text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-bold mb-2">Halaman Laporan</h3>
+                        <p class="text-gray-500">Fitur laporan sedang dalam pengembangan</p>
+                    </div>
+                </div>
+
+                <!-- Settings Page -->
+                <div id="settingsPage" class="page-content hidden">
+                    <div class="mb-6">
+                        <h3 class="text-2xl font-bold mb-2">Pengaturan Aplikasi</h3>
+                        <p class="text-gray-500 dark:text-gray-400">Atur preferensi aplikasi Anda</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- General Settings -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <h4 class="font-bold mb-4">Pengaturan Umum</h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Mata Uang</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                        <option>IDR (Rp)</option>
+                                        <option>USD ($)</option>
+                                        <option>EUR (€)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Format Tanggal</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                        <option>DD/MM/YYYY</option>
+                                        <option>MM/DD/YYYY</option>
+                                        <option>YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Bahasa</label>
+                                    <select class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                        <option>Bahasa Indonesia</option>
+                                        <option>English</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Management -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="font-bold">Manajemen Kategori</h4>
+                                <button onclick="showAddCategoryModal()" class="text-sm text-blue-500 hover:text-blue-600">
+                                    <i class="fas fa-plus mr-1"></i>Tambah
+                                </button>
+                            </div>
+                            <div class="space-y-3 max-h-64 overflow-y-auto">
+                                <!-- Categories will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Data Management -->
+                        <div class="bg-white dark:bg-gray-800 rounded-xl shadow p-5 lg:col-span-2">
+                            <h4 class="font-bold mb-4">Manajemen Data</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <button onclick="exportAllData()" class="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
+                                    <i class="fas fa-download text-xl mb-2 text-blue-500"></i>
+                                    <p class="font-medium">Export Data</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Download semua data</p>
+                                </button>
+                                <button onclick="importData()" class="p-4 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 text-center">
+                                    <i class="fas fa-upload text-xl mb-2 text-green-500"></i>
+                                    <p class="font-medium">Import Data</p>
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">Upload file backup</p>
+                                </button>
+                                <button onclick="clearAllData()" class="p-4 border border-red-300 dark:border-red-700 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-center">
+                                    <i class="fas fa-trash text-xl mb-2 text-red-500"></i>
+                                    <p class="font-medium">Hapus Semua Data</p>
+                                    <p class="text-sm text-red-500">Hati-hati! Aksi ini tidak dapat dibatalkan</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Add Transaction Modal -->
+        <div id="addTransactionModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-md mx-4 fade-in">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold">Tambah Transaksi</h3>
+                        <button onclick="closeModal('addTransactionModal')" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form id="transactionForm" onsubmit="saveTransaction(event)">
+                        <!-- Transaction Type -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Tipe Transaksi</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" onclick="setTransactionType('income')" class="transaction-type-btn" data-type="income">
+                                    <i class="fas fa-arrow-down mr-2"></i>Pemasukan
+                                </button>
+                                <button type="button" onclick="setTransactionType('expense')" class="transaction-type-btn active" data-type="expense">
+                                    <i class="fas fa-arrow-up mr-2"></i>Pengeluaran
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Date -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Tanggal</label>
+                            <input type="text" id="transactionDate" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" required>
+                        </div>
+
+                        <!-- Amount -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Jumlah</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 transform -translate-y-1/2">Rp</span>
+                                <input type="number" id="transactionAmount" class="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" placeholder="0" required>
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Kategori</label>
+                            <select id="transactionCategory" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" required>
+                                <!-- Categories will be loaded dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Deskripsi</label>
+                            <input type="text" id="transactionDescription" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" placeholder="Deskripsi singkat">
+                        </div>
+
+                        <!-- Recurring -->
+                        <div class="mb-6">
+                            <label class="flex items-center">
+                                <input type="checkbox" id="isRecurring" class="rounded border-gray-300">
+                                <span class="ml-2">Transaksi berulang</span>
+                            </label>
+                            <div id="recurringOptions" class="mt-2 hidden">
+                                <select class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                    <option>Mingguan</option>
+                                    <option>Bulanan</option>
+                                    <option>Tahunan</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div class="flex space-x-3">
+                            <button type="submit" class="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+                                Simpan
+                            </button>
+                            <button type="button" onclick="closeModal('addTransactionModal')" class="flex-1 border border-gray-300 dark:border-gray-600 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Category Modal -->
+        <div id="addCategoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-md mx-4 fade-in">
+                <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-xl font-bold">Tambah Kategori</h3>
+                        <button onclick="closeModal('addCategoryModal')" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="p-6">
+                    <form id="categoryForm" onsubmit="saveCategory(event)">
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Nama Kategori</label>
+                            <input type="text" id="categoryName" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Tipe</label>
+                            <select id="categoryType" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-transparent">
+                                <option value="expense">Pengeluaran</option>
+                                <option value="income">Pemasukan</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Warna</label>
+                            <div class="flex space-x-2">
+                                <button type="button" onclick="setCategoryColor('#ef4444')" class="w-8 h-8 rounded-full bg-red-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="setCategoryColor('#f59e0b')" class="w-8 h-8 rounded-full bg-yellow-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="setCategoryColor('#10b981')" class="w-8 h-8 rounded-full bg-green-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="setCategoryColor('#3b82f6')" class="w-8 h-8 rounded-full bg-blue-500 border-2 border-transparent hover:border-gray-300"></button>
+                                <button type="button" onclick="setCategoryColor('#8b5cf6')" class="w-8 h-8 rounded-full bg-purple-500 border-2 border-transparent hover:border-gray-300"></button>
+                            </div>
+                            <input type="hidden" id="categoryColor" value="#3b82f6">
+                        </div>
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium mb-2">Icon</label>
+                            <div class="grid grid-cols-6 gap-2">
+                                <button type="button" onclick="setCategoryIcon('fa-utensils')" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-utensils"></i>
+                                </button>
+                                <button type="button" onclick="setCategoryIcon('fa-car')" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-car"></i>
+                                </button>
+                                <button type="button" onclick="setCategoryIcon('fa-home')" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-home"></i>
+                                </button>
+                                <button type="button" onclick="setCategoryIcon('fa-shopping-cart')" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-shopping-cart"></i>
+                                </button>
+                                <button type="button" onclick="setCategoryIcon('fa-heart')" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-heart"></i>
+                                </button>
+                                <button type="button" onclick="setCategoryIcon('fa-graduation-cap')" class="p-2 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </button>
+                            </div>
+                            <input type="hidden" id="categoryIcon" value="fa-utensils">
+                        </div>
+                        <div class="flex space-x-3">
+                            <button type="submit" class="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition">
+                                Simpan
+                            </button>
+                            <button type="button" onclick="closeModal('addCategoryModal')" class="flex-1 border border-gray-300 dark:border-gray-600 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                                Batal
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toast Notification -->
+        <div id="toast" class="fixed bottom-4 right-4 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full transition-transform duration-300 z-50">
+            <div class="flex items-center space-x-3">
+                <i id="toastIcon" class="fas fa-check"></i>
+                <span id="toastMessage">Operasi berhasil!</span>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg w-full max-w-md mx-4 fade-in">
+                <div class="p-6">
+                    <div class="text-center mb-4">
+                        <i id="confirmIcon" class="fas fa-exclamation-triangle text-3xl text-yellow-500 mb-3"></i>
+                        <h3 id="confirmTitle" class="text-xl font-bold mb-2">Konfirmasi</h3>
+                        <p id="confirmMessage" class="text-gray-600 dark:text-gray-400">Anda yakin ingin melanjutkan?</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button id="confirmYes" class="flex-1 bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition">
+                            Ya
+                        </button>
+                        <button onclick="closeModal('confirmationModal')" class="flex-1 border border-gray-300 dark:border-gray-600 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                            Batal
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // ===== APP STATE =====
+        let appState = {
+            currentPage: 'dashboard',
+            darkMode: localStorage.getItem('darkMode') === 'true',
+            transactions: JSON.parse(localStorage.getItem('transactions')) || [],
+            categories: JSON.parse(localStorage.getItem('categories')) || [
+                { id: 1, name: 'Makanan', type: 'expense', color: '#ef4444', icon: 'fa-utensils' },
+                { id: 2, name: 'Transportasi', type: 'expense', color: '#f59e0b', icon: 'fa-car' },
+                { id: 3, name: 'Hiburan', type: 'expense', color: '#8b5cf6', icon: 'fa-film' },
+                { id: 4, name: 'Kesehatan', type: 'expense', color: '#10b981', icon: 'fa-heart' },
+                { id: 5, name: 'Belanja', type: 'expense', color: '#ec4899', icon: 'fa-shopping-bag' },
+                { id: 6, name: 'Gaji', type: 'income', color: '#3b82f6', icon: 'fa-money-bill' },
+                { id: 7, name: 'Freelance', type: 'income', color: '#06b6d4', icon: 'fa-laptop-code' },
+                { id: 8, name: 'Investasi', type: 'income', color: '#14b8a6', icon: 'fa-chart-line' }
+            ],
+            selectedTransactionIds: new Set(),
+            currentTransactionId: null
+        };
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set initial dark mode
+            if (appState.darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            // Initialize date pickers
+            flatpickr("#transactionDate", {
+                dateFormat: "d/m/Y",
+                defaultDate: "today"
+            });
+
+            flatpickr("#dateRangeFilter", {
+                mode: "range",
+                dateFormat: "d/m/Y",
+                locale: "id"
+            });
+
+            flatpickr("#reportDateRange", {
+                mode: "range",
+                dateFormat: "d/m/Y",
+                locale: "id"
+            });
+
+            // Set current date
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('id-ID', options);
+
+            // Load categories
+            loadCategories();
+
+            // Load initial data
+            loadDashboardData();
+            loadRecentTransactions();
+            loadAllTransactions();
+
+            // Initialize charts
+            initializeCharts();
+
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('app').classList.remove('hidden');
+            }, 1000);
+        });
+
+        // ===== NAVIGATION =====
+        function showPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.add('hidden');
+            });
+
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected page
+            document.getElementById(`${pageName}Page`).classList.remove('hidden');
+
+            // Set active nav item
+            document.querySelector(`[onclick="showPage('${pageName}')"]`).classList.add('active');
+
+            // Update page title
+            const titles = {
+                dashboard: 'Dashboard',
+                transactions: 'Transaksi',
+                analysis: 'Analisis',
+                budget: 'Anggaran',
+                debts: 'Hutang/Piutang',
+                goals: 'Target',
+                reports: 'Laporan',
+                settings: 'Pengaturan'
+            };
+            document.getElementById('pageTitle').textContent = titles[pageName];
+            document.getElementById('pageSubtitle').textContent = getPageSubtitle(pageName);
+
+            // Close mobile menu
+            toggleMobileMenu(false);
+
+            // Update app state
+            appState.currentPage = pageName;
+        }
+
+        function getPageSubtitle(page) {
+            const subtitles = {
+                dashboard: 'Ringkasan keuangan Anda',
+                transactions: 'Kelola semua transaksi',
+                analysis: 'Analisis mendalam keuangan',
+                budget: 'Atur anggaran bulanan',
+                debts: 'Kelola hutang dan piutang',
+                goals: 'Target dan tabungan',
+                reports: 'Generate laporan',
+                settings: 'Pengaturan aplikasi'
+            };
+            return subtitles[page] || '';
+        }
+
+        function showAnalysisTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.analysis-tab-content').forEach(tab => {
+                tab.classList.add('hidden');
+            });
+
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.analysis-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(`${tabName}Tab`).classList.remove('hidden');
+
+            // Set active tab button
+            document.querySelector(`[onclick="showAnalysisTab('${tabName}')"]`).classList.add('active');
+        }
+
+        function toggleMobileMenu(show) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobileMenuOverlay');
+            
+            if (show === undefined) {
+                show = sidebar.classList.contains('-translate-x-full');
+            }
+            
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // ===== DARK MODE =====
+        function toggleDarkMode() {
+            appState.darkMode = !appState.darkMode;
+            localStorage.setItem('darkMode', appState.darkMode);
+            
+            if (appState.darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            
+            // Reset form if exists
+            const form = document.querySelector(`#${modalId} form`);
+            if (form) form.reset();
+            
+            // Reset transaction type
+            if (modalId === 'addTransactionModal') {
+                setTransactionType('expense');
+            }
+        }
+
+        function showAddTransactionModal() {
+            showModal('addTransactionModal');
+        }
+
+        function showAddCategoryModal() {
+            showModal('addCategoryModal');
+        }
+
+        function setTransactionType(type) {
+            const buttons = document.querySelectorAll('.transaction-type-btn');
+            buttons.forEach(btn => {
+                if (btn.dataset.type === type) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        function setCategoryColor(color) {
+            document.getElementById('categoryColor').value = color;
+        }
+
+        function setCategoryIcon(icon) {
+            document.getElementById('categoryIcon').value = icon;
+        }
+
+        // ===== DATA MANAGEMENT =====
+        function loadCategories() {
+            const categorySelect = document.getElementById('transactionCategory');
+            const categoryFilter = document.getElementById('categoryFilter');
+            const categorySelectAnalysis = document.getElementById('categorySelect');
+            const reportCategoryFilter = document.getElementById('reportCategoryFilter');
+            
+            // Clear existing options except first
+            [categorySelect, categoryFilter, categorySelectAnalysis, reportCategoryFilter].forEach(select => {
+                if (select) {
+                    while (select.options.length > 1) {
+                        select.remove(1);
+                    }
+                }
+            });
+            
+            // Add categories
+            appState.categories.forEach(category => {
+                const option = new Option(category.name, category.id);
+                const option2 = new Option(category.name, category.id);
+                const option3 = new Option(category.name, category.id);
+                const option4 = new Option(category.name, category.id);
+                
+                if (categorySelect) categorySelect.add(option);
+                if (categoryFilter) categoryFilter.add(option2.cloneNode(true));
+                if (categorySelectAnalysis) categorySelectAnalysis.add(option3.cloneNode(true));
+                if (reportCategoryFilter) reportCategoryFilter.add(option4.cloneNode(true));
+            });
+        }
+
+        function loadDashboardData() {
+            // Calculate totals
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            let monthlyIncome = 0;
+            let monthlyExpense = 0;
+            
+            appState.transactions.forEach(transaction => {
+                const transDate = new Date(transaction.date);
+                if (transDate.getMonth() === currentMonth && transDate.getFullYear() === currentYear) {
+                    if (transaction.type === 'income') {
+                        monthlyIncome += transaction.amount;
+                    } else {
+                        monthlyExpense += transaction.amount;
+                    }
+                }
+            });
+            
+            // Update UI
+            document.getElementById('monthlyIncome').textContent = formatCurrency(monthlyIncome);
+            document.getElementById('monthlyExpense').textContent = formatCurrency(monthlyExpense);
+            document.getElementById('netIncome').textContent = formatCurrency(monthlyIncome - monthlyExpense);
+            document.getElementById('totalBalance').textContent = formatCurrency(monthlyIncome - monthlyExpense);
+        }
+
+        function loadRecentTransactions() {
+            const container = document.getElementById('recentTransactions');
+            container.innerHTML = '';
+            
+            // Get last 5 transactions
+            const recentTransactions = [...appState.transactions]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+            
+            if (recentTransactions.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-receipt text-3xl mb-3"></i>
+                            <p>Belum ada transaksi</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            recentTransactions.forEach(transaction => {
+                const category = appState.categories.find(c => c.id === transaction.categoryId);
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50';
+                row.innerHTML = `
+                    <td class="p-4">${formatDate(transaction.date)}</td>
+                    <td class="p-4">
+                        <div class="flex items-center">
+                            <div class="w-8 h-8 rounded-lg flex items-center justify-center mr-2" style="background-color: ${category?.color || '#ccc'}20">
+                                <i class="${category?.icon || 'fa-question'} text-sm" style="color: ${category?.color || '#ccc'}"></i>
+                            </div>
+                            ${category?.name || 'Unknown'}
+                        </div>
+                    </td>
+                    <td class="p-4">${transaction.description || '-'}</td>
+                    <td class="p-4 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'} font-medium">
+                        ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount)}
+                    </td>
+                    <td class="p-4">
+                        <div class="flex space-x-2">
+                            <button onclick="editTransaction(${transaction.id})" class="text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteTransaction(${transaction.id})" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
+        function loadAllTransactions() {
+            const container = document.getElementById('allTransactions');
+            container.innerHTML = '';
+            
+            if (appState.transactions.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-gray-500 dark:text-gray-400">
+                            <i class="fas fa-receipt text-3xl mb-3"></i>
+                            <p>Belum ada transaksi</p>
+                            <button onclick="showAddTransactionModal()" class="mt-3 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                                Tambah Transaksi Pertama
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                updateTransactionCount();
+                return;
+            }
+            
+            // Sort by date (newest first)
+            const sortedTransactions = [...appState.transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedTransactions.forEach(transaction => {
+                const category = appState.categories.find(c => c.id === transaction.categoryId);
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50';
+                row.innerHTML = `
+                    <td class="p-4">
+                        <input type="checkbox" value="${transaction.id}" class="transaction-checkbox rounded border-gray-300">
+                    </td>
+                    <td class="p-4">${formatDate(transaction.date)}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded-full text-xs ${transaction.type === 'income' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'}">
+                            ${transaction.type === 'income' ? 'Pemasukan' : 'Pengeluaran'}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        <div class="flex items-center">
+                            <div class="w-6 h-6 rounded-lg flex items-center justify-center mr-2" style="background-color: ${category?.color || '#ccc'}20">
+                                <i class="${category?.icon || 'fa-question'} text-xs" style="color: ${category?.color || '#ccc'}"></i>
+                            </div>
+                            ${category?.name || 'Unknown'}
+                        </div>
+                    </td>
+                    <td class="p-4">${transaction.description || '-'}</td>
+                    <td class="p-4 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'} font-medium">
+                        ${transaction.type === 'income' ? '+' : '-'}${formatCurrency(transaction.amount)}
+                    </td>
+                    <td class="p-4">
+                        <div class="flex space-x-2">
+                            <button onclick="editTransaction(${transaction.id})" class="text-blue-500 hover:text-blue-700">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="deleteTransaction(${transaction.id})" class="text-red-500 hover:text-red-700">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                container.appendChild(row);
+            });
+            
+            // Add checkbox event listeners
+            document.querySelectorAll('.transaction-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        appState.selectedTransactionIds.add(parseInt(this.value));
+                    } else {
+                        appState.selectedTransactionIds.delete(parseInt(this.value));
+                    }
+                    updateBulkActions();
+                });
+            });
+            
+            // Select all checkbox
+            document.getElementById('selectAll').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('.transaction-checkbox');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                    if (this.checked) {
+                        appState.selectedTransactionIds.add(parseInt(checkbox.value));
+                    } else {
+                        appState.selectedTransactionIds.delete(parseInt(checkbox.value));
+                    }
+                });
+                updateBulkActions();
+            });
+            
+            updateTransactionCount();
+        }
+
+        function updateTransactionCount() {
+            const count = appState.transactions.length;
+            document.getElementById('transactionCount').textContent = `${count} transaksi ditemukan`;
+            document.getElementById('totalTransactions').textContent = count;
+        }
+
+        function updateBulkActions() {
+            const btn = document.getElementById('bulkDeleteBtn');
+            if (appState.selectedTransactionIds.size > 0) {
+                btn.classList.remove('hidden');
+                btn.innerHTML = `<i class="fas fa-trash mr-2"></i>Hapus (${appState.selectedTransactionIds.size})`;
+            } else {
+                btn.classList.add('hidden');
+            }
+        }
+
+        // ===== TRANSACTION CRUD =====
+        function saveTransaction(event) {
+            event.preventDefault();
+            
+            const type = document.querySelector('.transaction-type-btn.active').dataset.type;
+            const date = document.getElementById('transactionDate').value;
+            const amount = parseFloat(document.getElementById('transactionAmount').value);
+            const categoryId = parseInt(document.getElementById('transactionCategory').value);
+            const description = document.getElementById('transactionDescription').value;
+            
+            if (appState.currentTransactionId) {
+                // Update existing transaction
+                const index = appState.transactions.findIndex(t => t.id === appState.currentTransactionId);
+                if (index !== -1) {
+                    appState.transactions[index] = {
+                        ...appState.transactions[index],
+                        type,
+                        date,
+                        amount,
+                        categoryId,
+                        description
+                    };
+                }
+                appState.currentTransactionId = null;
+            } else {
+                // Add new transaction
+                const newTransaction = {
+                    id: Date.now(),
+                    type,
+                    date,
+                    amount,
+                    categoryId,
+                    description,
+                    createdAt: new Date().toISOString()
+                };
+                appState.transactions.push(newTransaction);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('transactions', JSON.stringify(appState.transactions));
+            
+            // Update UI
+            loadDashboardData();
+            loadRecentTransactions();
+            loadAllTransactions();
+            
+            // Close modal
+            closeModal('addTransactionModal');
+            
+            // Show success message
+            showToast('Transaksi berhasil disimpan!', 'success');
+            
+            // Update charts if on dashboard
+            if (appState.currentPage === 'dashboard') {
+                updateCharts();
+            }
+        }
+
+        function editTransaction(id) {
+            const transaction = appState.transactions.find(t => t.id === id);
+            if (!transaction) return;
+            
+            appState.currentTransactionId = id;
+            
+            // Set transaction type
+            setTransactionType(transaction.type);
+            
+            // Fill form
+            document.getElementById('transactionDate').value = transaction.date;
+            document.getElementById('transactionAmount').value = transaction.amount;
+            document.getElementById('transactionCategory').value = transaction.categoryId;
+            document.getElementById('transactionDescription').value = transaction.description || '';
+            
+            // Show modal
+            showModal('addTransactionModal');
+        }
+
+        function deleteTransaction(id) {
+            showConfirmation(
+                'Hapus Transaksi',
+                'Apakah Anda yakin ingin menghapus transaksi ini?',
+                'fa-trash',
+                () => {
+                    appState.transactions = appState.transactions.filter(t => t.id !== id);
+                    localStorage.setItem('transactions', JSON.stringify(appState.transactions));
+                    
+                    loadDashboardData();
+                    loadRecentTransactions();
+                    loadAllTransactions();
+                    
+                    showToast('Transaksi berhasil dihapus!', 'success');
+                    
+                    if (appState.currentPage === 'dashboard') {
+                        updateCharts();
+                    }
+                }
+            );
+        }
+
+        function bulkDeleteTransactions() {
+            if (appState.selectedTransactionIds.size === 0) return;
+            
+            showConfirmation(
+                'Hapus Transaksi',
+                `Apakah Anda yakin ingin menghapus ${appState.selectedTransactionIds.size} transaksi?`,
+                'fa-trash',
+                () => {
+                    appState.transactions = appState.transactions.filter(
+                        t => !appState.selectedTransactionIds.has(t.id)
+                    );
+                    
+                    localStorage.setItem('transactions', JSON.stringify(appState.transactions));
+                    appState.selectedTransactionIds.clear();
+                    
+                    loadDashboardData();
+                    loadRecentTransactions();
+                    loadAllTransactions();
+                    
+                    showToast(`${appState.selectedTransactionIds.size} transaksi berhasil dihapus!`, 'success');
+                    
+                    if (appState.currentPage === 'dashboard') {
+                        updateCharts();
+                    }
+                }
+            );
+        }
+
+        function saveCategory(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('categoryName').value;
+            const type = document.getElementById('categoryType').value;
+            const color = document.getElementById('categoryColor').value;
+            const icon = document.getElementById('categoryIcon').value;
+            
+            const newCategory = {
+                id: Date.now(),
+                name,
+                type,
+                color,
+                icon
+            };
+            
+            appState.categories.push(newCategory);
+            localStorage.setItem('categories', JSON.stringify(appState.categories));
+            
+            loadCategories();
+            closeModal('addCategoryModal');
+            showToast('Kategori berhasil ditambahkan!', 'success');
+        }
+
+        // ===== FILTERS =====
+        function applyFilters() {
+            // Implementation for filtering transactions
+            showToast('Filter diterapkan', 'info');
+        }
+
+        function resetFilters() {
+            document.getElementById('dateRangeFilter').value = '';
+            document.getElementById('typeFilter').value = '';
+            document.getElementById('categoryFilter').value = '';
+            showToast('Filter direset', 'info');
+        }
+
+        // ===== CHARTS =====
+        let incomeExpenseChart, categoryChart, monthlyComparisonChart;
+
+        function initializeCharts() {
+            // Income vs Expense Chart
+            const incomeExpenseCtx = document.getElementById('incomeExpenseChart').getContext('2d');
+            incomeExpenseChart = new Chart(incomeExpenseCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Pemasukan',
+                            data: [5000000, 6000000, 7000000, 8000000, 7500000, 8500000],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Pengeluaran',
+                            data: [3000000, 3500000, 4000000, 4500000, 4200000, 4250000],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + (value / 1000000).toFixed(1) + 'jt';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Category Chart
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            categoryChart = new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Makanan', 'Transportasi', 'Hiburan', 'Kesehatan', 'Lainnya'],
+                    datasets: [{
+                        data: [1200000, 800000, 500000, 300000, 1450000],
+                        backgroundColor: [
+                            '#ef4444',
+                            '#f59e0b',
+                            '#8b5cf6',
+                            '#10b981',
+                            '#64748b'
+                        ],
+                        borderWidth: 2,
+                        borderColor: document.documentElement.classList.contains('dark') ? '#1e293b' : '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `Rp ${formatCurrency(value)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Monthly Comparison Chart
+            const monthlyComparisonCtx = document.getElementById('monthlyComparisonChart').getContext('2d');
+            monthlyComparisonChart = new Chart(monthlyComparisonCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+                    datasets: [
+                        {
+                            label: 'Pemasukan',
+                            data: [5000000, 6000000, 7000000, 8000000, 7500000, 8500000],
+                            backgroundColor: '#10b981',
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Pengeluaran',
+                            data: [3000000, 3500000, 4000000, 4500000, 4200000, 4250000],
+                            backgroundColor: '#ef4444',
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return 'Rp ' + (value / 1000000).toFixed(1) + 'jt';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            // Update charts with real data from transactions
+            // This is a simplified version - you would implement actual data aggregation here
+            
+            showToast('Chart diperbarui', 'info');
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'decimal',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastIcon = document.getElementById('toastIcon');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            // Set icon based on type
+            const icons = {
+                success: 'fa-check-circle',
+                error: 'fa-exclamation-circle',
+                warning: 'fa-exclamation-triangle',
+                info: 'fa-info-circle'
+            };
+            
+            toastIcon.className = `fas ${icons[type] || icons.success}`;
+            toastMessage.textContent = message;
+            
+            // Show toast
+            toast.classList.remove('translate-y-full');
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('translate-y-full');
+            }, 3000);
+        }
+
+        function showConfirmation(title, message, icon, onConfirm) {
+            document.getElementById('confirmTitle').textContent = title;
+            document.getElementById('confirmMessage').textContent = message;
+            document.getElementById('confirmIcon').className = `fas ${icon} text-3xl text-yellow-500 mb-3`;
+            
+            const confirmBtn = document.getElementById('confirmYes');
+            confirmBtn.onclick = function() {
+                closeModal('confirmationModal');
+                if (onConfirm) onConfirm();
+            };
+            
+            showModal('confirmationModal');
+        }
+
+        function backupData() {
+            const data = {
+                transactions: appState.transactions,
+                categories: appState.categories,
+                backupDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `financepro-backup-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Backup data berhasil!', 'success');
+        }
+
+        function exportAllData() {
+            backupData();
+        }
+
+        function importData() {
+            showToast('Fitur import akan segera tersedia', 'info');
+        }
+
+        function clearAllData() {
+            showConfirmation(
+                'Hapus Semua Data',
+                'Apakah Anda yakin ingin menghapus semua data? Aksi ini tidak dapat dibatalkan!',
+                'fa-exclamation-triangle',
+                () => {
+                    localStorage.clear();
+                    appState.transactions = [];
+                    appState.categories = [
+                        { id: 1, name: 'Makanan', type: 'expense', color: '#ef4444', icon: 'fa-utensils' },
+                        { id: 2, name: 'Transportasi', type: 'expense', color: '#f59e0b', icon: 'fa-car' },
+                        { id: 3, name: 'Hiburan', type: 'expense', color: '#8b5cf6', icon: 'fa-film' },
+                        { id: 4, name: 'Kesehatan', type: 'expense', color: '#10b981', icon: 'fa-heart' },
+                        { id: 5, name: 'Belanja', type: 'expense', color: '#ec4899', icon: 'fa-shopping-bag' },
+                        { id: 6, name: 'Gaji', type: 'income', color: '#3b82f6', icon: 'fa-money-bill' },
+                        { id: 7, name: 'Freelance', type: 'income', color: '#06b6d4', icon: 'fa-laptop-code' },
+                        { id: 8, name: 'Investasi', type: 'income', color: '#14b8a6', icon: 'fa-chart-line' }
+                    ];
+                    
+                    loadCategories();
+                    loadDashboardData();
+                    loadRecentTransactions();
+                    loadAllTransactions();
+                    
+                    showToast('Semua data berhasil dihapus!', 'success');
+                }
+            );
+        }
+
+        function exportTransactions() {
+            if (appState.transactions.length === 0) {
+                showToast('Tidak ada data untuk diexport', 'warning');
+                return;
+            }
+            
+            const csv = [
+                ['Tanggal', 'Tipe', 'Kategori', 'Deskripsi', 'Jumlah'],
+                ...appState.transactions.map(t => {
+                    const category = appState.categories.find(c => c.id === t.categoryId);
+                    return [
+                        formatDate(t.date),
+                        t.type === 'income' ? 'Pemasukan' : 'Pengeluaran',
+                        category?.name || 'Unknown',
+                        t.description || '',
+                        t.type === 'income' ? t.amount : -t.amount
+                    ];
+                })
+            ].map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Data berhasil diexport!', 'success');
+        }
+
+        function generateReport() {
+            showToast('Laporan berhasil digenerate!', 'success');
+        }
+
+        function saveReportTemplate() {
+            showToast('Template berhasil disimpan!', 'success');
+        }
+
+        // ===== PAGINATION =====
+        function prevPage() {
+            // Implementation for previous page
+            showToast('Halaman sebelumnya', 'info');
+        }
+
+        function nextPage() {
+            // Implementation for next page
+            showToast('Halaman berikutnya', 'info');
+        }
+
+        // Initialize transaction type buttons
+        document.querySelectorAll('.transaction-type-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.transaction-type-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Initialize analysis tab buttons
+        document.querySelectorAll('.analysis-tab').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.analysis-tab').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Toggle recurring options
+        document.getElementById('isRecurring')?.addEventListener('change', function() {
+            document.getElementById('recurringOptions').classList.toggle('hidden', !this.checked);
+        });
+    </script>
+
+    <!-- Custom CSS -->
+    <style>
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #64748b;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .nav-item:hover {
+            background-color: #f1f5f9;
+            color: #334155;
+        }
+        .dark .nav-item:hover {
+            background-color: #334155;
+            color: #e2e8f0;
+        }
+        .nav-item.active {
+            background-color: #dbeafe;
+            color: #1d4ed8;
+        }
+        .dark .nav-item.active {
+            background-color: #1e3a8a;
+            color: #93c5fd;
+        }
+        .nav-item i {
+            width: 20px;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+        
+        .transaction-type-btn {
+            padding: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: transparent;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .transaction-type-btn.active {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+        }
+        .dark .transaction-type-btn {
+            border-color: #475569;
+        }
+        .dark .transaction-type-btn.active {
+            border-color: #3b82f6;
+            background-color: #1e3a8a;
+            color: #93c5fd;
+        }
+        
+        .analysis-tab {
+            padding: 8px 16px;
+            border-bottom: 2px solid transparent;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .analysis-tab:hover {
+            color: #334155;
+        }
+        .dark .analysis-tab:hover {
+            color: #e2e8f0;
+        }
+        .analysis-tab.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+        }
+        
+        .page-content {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</body>
+</html>
